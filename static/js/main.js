@@ -110,10 +110,10 @@ function earnFearCard() {
 function updateFearBadge() {
     console.log('Update badge to show ' + earnedFearCards + ' fear cards. ')
     if (earnedFearCards == 0) {
-        phaseListFearBadge.classList.add('hidden');
+        phaseListFearBadge.hide();
     }
     else {
-        phaseListFearBadge.classList.remove('hidden');
+        phaseListFearBadge.show();
     }
 
     leftBarFearBadge.innerHTML = earnedFearCards;
