@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     leftBarFearBadge = document.getElementById('left-bar-fear-badge');
     phaseListFearBadge = document.getElementById('fear-badge')
+    if (leftBarFearBadge && phaseListFearBadge) {
+        updateFearBadge();
+    }
 });
 
 
