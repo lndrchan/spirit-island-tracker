@@ -21,7 +21,7 @@ var earnedFearCards = 0;
 var fearMax = 8;
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+$( document ).ready(function() {
 
     phaseList = document.querySelectorAll('.list-group-item');
     fearProgress = document.getElementById('fear-progress');
@@ -54,28 +54,29 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
 // Add click handler to the button
 function nextStep() {
+
+    setPhase((phase + 1) % phaseListLength);
 
     if (phase === 4) {
         if (earnedFearCards > 0) {
             drawCard('fear');
+            earnedFearCards--;
+            updateFearBadge();
             return;
+        }
+        else if (earnedFearCards === 0) {
+        setPhase((phase + 1) % phaseListLength);
         }
     }
 
-    setPhase((phase + 1) % phaseListLength);
-
-    const currentPhaseName = phaseList[phase].querySelector('.phase-list-title').textContent;
-    console.log('Current Phase:', currentPhaseName);
 
     if (phase === 3) {
         drawCard('event');
     }
 
-    if (earnedFearCards === 0) {
-        setPhase((phase + 1) % phaseListLength);
-    }
 }
 
 function addFear() {
@@ -139,9 +140,6 @@ function drawCard(type) {
                 random = Math.floor(Math.random() * 51) + 1;
                 img.src = `/static/assets/fear/${random}.jpg`;
 
-                earnedFearCards--;
-                updateFearBadge();
-
                 break;
             case 'event':
                 random = Math.floor(Math.random() * 58 + 1);
@@ -169,4 +167,7 @@ function setPhase(index) {
         phase = 0;
 
     phaseList[phase].classList.add(activeListItemClass);
+
+    const currentPhaseName = phaseList[phase].querySelector('.phase-list-title').textContent;
+    console.log('Set phase to be ', currentPhaseName);
 }

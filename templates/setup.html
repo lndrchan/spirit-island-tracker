@@ -6,11 +6,21 @@
     Player count
 </h3>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+  <input class="form-check-input" type="radio" name="player-count" id="player-count-1" value="1">
   <label class="form-check-label" for="exampleRadios1">
     1
   </label>
+
+  <input class="form-check-input" type="radio" name="player-count" id="exampleRadios1" value="2" checked>
+  <label class="form-check-label" for="exampleRadios1">
+    2
+  </label>
 </div>
+
+<button class="btn btn-primary" type="submit" formaction="/SI-Helper" formmethod="post">
+  Create Game
+</button>
+
 
 <script src="{{ url_for('static', filename='js/setup.js') }}"></script>
 

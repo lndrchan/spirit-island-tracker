@@ -3,7 +3,7 @@ import git
 import os
 
 app = Flask(__name__)
-repo = git.Repo('/home/lndr/SI-Helper')
+
 
 @app.route("/")
 def main():
@@ -11,17 +11,19 @@ def main():
 
 @app.route("/SI-Helper")
 def sih():
-    if request.form:
-        return render_template("main.html")
-    else:
-        return render_template("main.html")
+    return render_template("main.html")
+
+
+'''
 
 @app.route('/SI-Helper/update-server', methods=['POST'])
 def webhook():
+    repo = git.Repo('/home/lndr/SI-Helper')
     if request.method == 'POST':
-        
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
     else:
         return 'Wrong event type', 400
+        
+'''
