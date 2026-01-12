@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session
-from git import Repo
+import git
+import os
 
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ def main():
 @app.route('/update-server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo(self.rorepo.working_tree_dir)
+        repo = git.Repo(os.path.abspath(os.path.dirname(__file__)))
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
