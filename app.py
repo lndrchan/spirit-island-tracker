@@ -14,7 +14,7 @@ def main():
 @app.route('/update-server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo('/SI-Helper')
+        repo = git.Repo('/home/lndr/SI-Helper')
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
