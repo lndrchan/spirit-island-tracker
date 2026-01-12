@@ -14,7 +14,7 @@ var phaseList = null;
 var phaseListLength = 0;
 
 var fearProgress = null;
-var fearBadge = null;
+var fearBadges = null;
 var fear = 0;
 var earnedFearCards = 0;
 var fearMax = 8;
@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addFearBtn) {
         addFearBtn.addEventListener('click', addFear);
     }
+
+    fearBadges = document.querySelectorAll('fear-badge');
 });
 
 
@@ -72,7 +74,7 @@ function addFear() {
         fear = 0;
     }
     if (fear === fearMax) {
-
+        earnFearCard();
     }
 
     fearProgress.setAttribute('style', 'width: ' + fear / fearMax * 100 + '%');
@@ -91,7 +93,9 @@ function removeFear() {
 
 function earnFearCard() {
     earnedFearCards ++;
-
+    for (badge in fearBadges) {
+        badge.innerHTML = earnFearCard;
+    }
 }
 
 // Function to draw and display a random card
