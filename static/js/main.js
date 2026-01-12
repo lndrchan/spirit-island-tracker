@@ -109,11 +109,11 @@ function drawCard(type) {
         {
             case 'fear':
                 random = Math.floor(Math.random() * 51) + 1;
-                img.src = `/static/assets/fear/${random}.png`;
+                img.src = `/static/assets/fear/${random}.jpg`;
                 break;
             case 'event':
                 random = Math.floor(Math.random() * 58 + 1);
-                img.src = `/static/assets/event/${random}.png`;
+                img.src = `/static/assets/event/${random}.jpg`;
                 break;
         }
 
