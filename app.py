@@ -1,20 +1,25 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect
 import git
 import os
 
 app = Flask(__name__)
+repo = git.Repo('/home/lndr/SI-Helper')
 
 @app.route("/")
 def main():
-    if request.method == 'POST':
+    return redirect('/SI-Helper')
+
+@app.route("/SI-Helper")
+def sih():
+    if request.form:
         return render_template("main.html")
     else:
         return render_template("main.html")
 
-@app.route('/update-server', methods=['POST'])
+@app.route('/SI-Helper/update-server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo('/home/lndr/SI-Helper')
+        
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
