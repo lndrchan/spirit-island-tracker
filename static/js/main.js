@@ -33,6 +33,8 @@ var fearMax = 8;
 
 var cardDisplay = null;
 
+var invaderLevelSeq = []
+
 // To store serialised game state for gamesaves persisting between sessions
 var state = [];
 
