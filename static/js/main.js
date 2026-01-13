@@ -88,6 +88,7 @@ function nextStep() {
 
     if (phase === 4) {
         if (earnedFearCards === 0) {
+            // Skip fear card phase if there is no earned fear card
             setPhase((phase + 1) % phaseListLength);
         }
         else {
