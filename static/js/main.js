@@ -75,9 +75,6 @@ jQuery(function() {
     setPhase(0);
 });
 
-
-
-// Add click handler to the button
 function nextStep() {
 
     if (phase === 4 && earnedFearCards > 0) {
