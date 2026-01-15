@@ -399,19 +399,19 @@ function generateBadge(terrain) {
             b.html('Jungle');
             break;
         case 'm': 
-            b.attr('background-color', '#111111');
+            b.attr('background-color', '#606060');
             b.html('Mountain');
             break;
         case 's': 
-            b.attr('background-color', '$yellow-200');
+            b.attr('background-color', '#111111');
             b.html('Sand');
             break;
         case 'w': 
-            b.attr('background-color', '$cyan-300');
+            b.attr('background-color', '#111111');
             b.html('Wetland');
             break;
         case 'u': 
-            b.attr('background-color', '$gray-300');
+            b.attr('background-color', '#111111');
             b.html('Unknown');
             break;
         case 'n': 
