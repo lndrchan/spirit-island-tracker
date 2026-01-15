@@ -375,15 +375,13 @@ function updateInvaderBadge(showExplore) {
 
     let level = 0;
 
-    for (let i = 0; i < 3; i++) {
-        if (showExplore) {
-            level = invaderLevelSeq[turn];
-            if (level === 1 || level === 2) {
-                
-            }
+    if (showExplore) {
+        level = invaderLevelSeq[turn];
+        if (level === 1 || level === 2) {
+            
         }
-        
-        if (turn < 1) return;
-
     }
+    
+    if (turn < 1) return;
+
 }
