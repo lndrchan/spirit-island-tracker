@@ -373,9 +373,12 @@ function updateInvaderBadge(showExplore) {
 
     badges = [ravageBadge, buildBadge, exploreBadge];
 
+    let level = 0;
+
     for (let i = 0; i < 3; i++) {
         if (showExplore) {
             level = invaderLevelSeq[turn];
+
         }
         
         if (turn < 1) return;
