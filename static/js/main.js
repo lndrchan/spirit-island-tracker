@@ -450,10 +450,10 @@ function updateInvaderBadge(showExplore) {
         level = invaderLevelSeq[levelIndex];
 
         if (level === 1 || level === 2) {
-            badges[i].append(generateBadge(invaderSeq[turn][1]));
+            badges[i].append(generateBadge(invaderSeq[turn - i][1]));
         }
         else if (level === 3) {
-            badges[i].append(generateBadge(invaderSeq[turn][1]), generateBadge(invaderSeq[turn][2]));
+            badges[i].append(generateBadge(invaderSeq[turn - i][1]), generateBadge(invaderSeq[turn - i][2]));
         }
     
     }
