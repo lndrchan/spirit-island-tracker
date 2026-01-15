@@ -94,7 +94,8 @@
 #phase-list-explore-badge
 {
     display: inline;
-    margin-bottom: 6px;
+    position: relative;
+    top: 2px;
 }
 
 .badge
