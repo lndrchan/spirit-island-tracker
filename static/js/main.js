@@ -276,9 +276,9 @@ function setPhase(index) {
         }
         else if (phaseIndex === 5) {
             $('<ul></ul>')
-                .append('<li>Growth options</li>')
-                .append('<li>Gain energy</li>')
-                .append('<li>Choose and pay for cards</li>')
+                .append('<li>Ravage</li>')
+                .append('<li>Build</li>')
+                .append('<li>Explore</li>')
         }
 
         listItem.appendTo(phaseList);
