@@ -400,7 +400,7 @@ function generateBadge(terrain) {
             b.html('Jungle');
             break;
         case 'm': 
-            b.css('background-color', '#606060');
+            b.css('background-color', '#858585');
             b.css('color','#fff')
             b.html('Mountain');
             break;
@@ -415,7 +415,7 @@ function generateBadge(terrain) {
             b.html('Wetland');
             break;
         case 'u': 
-            b.css('background-color', '#000000');
+            b.css('background-color', '#484848');
             b.css('color','#fff')
             b.html('Unknown');
             break;
