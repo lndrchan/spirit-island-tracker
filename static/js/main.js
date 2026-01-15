@@ -184,7 +184,6 @@ function earnFearCard() {
 }
 
 function updateFearBadge() {
-    phaseListFearBadge = $('#phase-list-fear-badge');
     if (earnedFearCards == 0) {
         phaseListFearBadge.hide();
     }
@@ -194,7 +193,6 @@ function updateFearBadge() {
 
     leftBarFearBadge.html(earnedFearCards);
     phaseListFearBadge.html(earnedFearCards);
-
 }
 
 // Function to draw and display a random card
