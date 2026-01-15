@@ -262,7 +262,7 @@ function setPhase(index) {
             // Fear card phase special texts (fear badge)
             listItem.removeClass('d-flex');
             $('<span></span>')
-                .addClass('badge rounded-pill text-bg-primary fear-badge')
+                .addClass('badge badge-primary badge-pill fear-badge')
                 .attr('id', 'phase-list-fear-badge')
                 .appendTo(listItem);
         }
