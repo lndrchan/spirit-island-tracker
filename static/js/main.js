@@ -244,7 +244,10 @@ function setPhase(index) {
     for (let i = 0; i < maxPhaseListHeight; i++) {
         let phaseIndex = (i + phase - 1) % phaseListLength;
 
-        let listItem = $(document.createElement('div')).addClass('list-group-item d-flex justify-content-between align-items-center');
+        // Make list item container
+        let listItem = $(document.createElement('div'))
+            .addClass('list-group-item d-flex justify-content-between align-items-center');
+
         // Make heading
         $('<b></b>')
             .addClass('phase-list-title')
