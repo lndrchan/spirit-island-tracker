@@ -14,14 +14,14 @@ var phaseList = null;
 var phaseListLength = 0;
 var maxPhaseListHeight = 4;
 var phaseListDict = {
-    0: 'Spirit Phase</h3>    <ul><li>Growth options</li><li>Gain energy</li><li>Choose and pay for cards</li></ul> </div>',
-    1: '<h3 class="phase-list-title">Fast Powers</h3>',
-    2: '<h3 class="phase-list-title">Blighted Island Effect</h3>',
-    3: '<h3 class="phase-list-title">Events</h3>',
-    4: '<h3 class="phase-list-title">Fear Cards</h3> <span class="badge badge-primary badge-pill fear-badge" id="phase-list-fear-badge">2</span>',
-    5: '<div> <h3 class="phase-list-title">Invader Phase</h3>    <ul><li>Ravage</li><li>Build</li><li>Explore</li></ul> </div>',
-    6: '<h3 class="phase-list-title">Slow Powers</h3>',
-    7: '<h3 class="phase-list-title">Time Passes</h3>'
+    0: 'Spirit Phase    <ul><li>Growth options</li><li>Gain energy</li><li>Choose and pay for cards</li></ul> </div>',
+    1: 'Fast Powers',
+    2: 'Blighted Island Effect',
+    3: 'Events',
+    4: 'Fear Cards <span class="badge badge-primary badge-pill fear-badge" id="phase-list-fear-badge">2</span>',
+    5: 'Invader Phase   <ul><li>Ravage</li><li>Build</li><li>Explore</li></ul> </div>',
+    6: 'Slow Powers',
+    7: 'Time Passes'
 };
 
 var fearProgress = null;
@@ -249,7 +249,6 @@ function setPhase(index) {
             // Second item in list is current phase. 
             listItem.addClass('list-group-item-dark');
         }
-
         
         phaseListHTML += phaseListDict[(i + phase - 1) % phaseListLength];
 
