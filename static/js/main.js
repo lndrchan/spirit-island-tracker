@@ -249,10 +249,7 @@ function setPhase(index) {
             // Second item in list is current phase. 
             listItem.addClass('list-group-item-dark');
         }
-        
-        phaseListHTML += phaseListDict[(i + phase - 1) % phaseListLength];
 
-        phaseListHTML += '</div>';
 
     }   
     
