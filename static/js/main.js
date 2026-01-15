@@ -378,7 +378,7 @@ function updateInvaderBadge(showExplore) {
     if (showExplore) {
         level = invaderLevelSeq[turn];
         if (level === 1 || level === 2) {
-            exploreBadge.
+            exploreBadge.attr('background-color', '');
         }
     }
     
