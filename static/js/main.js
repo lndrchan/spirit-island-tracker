@@ -360,9 +360,21 @@ function generateBadge(terrain) {
     let b = document.createElement('span');
     
     switch (terrain) {
+        case 'j': 
+            b.attr('background-color', '$yellow-200');
+            b.html('Jungle');
+            break;
+        case 'm': 
+            b.attr('background-color', '$yellow-200');
+            b.html('Mountain');
+            break;
         case 's': 
             b.attr('background-color', '$yellow-200');
             b.html('Sand');
+            break;
+        case 'w': 
+            b.attr('background-color', '$yellow-200');
+            b.html('Wetland');
             break;
     }
 }
