@@ -43,8 +43,10 @@ var buildBadge = null;
 var exploreBadge = null;
 
 var invaderLevelSeq = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3];
-var invaderSeq = [];
+var invaderSeq = []; // [1s, 1w, 2c ... ]
+
 var turn = 0;
+
 var fearSeq = Array(50);
 var fearSeqIndex = 0;
 var eventSeq = Array(62);
