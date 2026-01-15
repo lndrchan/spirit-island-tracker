@@ -55,7 +55,7 @@ var ls = window.localStorage;
 // ls.setItem('key', 'value');
 
 // Initialisations
-jQuery(function() {
+$(function() {
 
     // Logic about game setup. 
 
