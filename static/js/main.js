@@ -308,42 +308,21 @@ function updateInvaderCard(showExplore) {
 
     clearInvaderCard();
 
+    invaderCards = [invaderCardExplore, invaderCardBuild, invaderCardRavage, invaderCardFourth];
+
     for (let i = 0; i < 4; i++) {
+        if (i > turn) return;
+
         let img = document.createElement('img');
         img.classList.add('game-card', 'game-card-invader');
-        if (i === 3 && !showExplore) {
-                img.src = `/static/assets/invader/${invaderLevelSeq[turn]}.jpg`;
-            }
-        else {
-            img.src = `/static/assets/invader/${invaderSeq[turn - 3 - i]}.jpg`;
+        if (i === 0 && !showExplore) {
+            img.src = `/static/assets/invader/${invaderLevelSeq[turn]}.jpg`;
         }
+        else {
+            img.src = `/static/assets/invader/${invaderSeq[turn - i]}.jpg`;
+        }
+        invaderCards[i].append(img);
     }
-
-    let img = document.createElement('img');
-    img.classList.add('game-card', 'game-card-invader');
-    img.src = `/static/assets/invader/${invaderLevelSeq[turn]}.jpg`;
-    invaderCardExplore.append(img);
-
-    if (turn < 1) return;
-
-    img = document.createElement('img');
-    img.classList.add('game-card', 'game-card-invader');
-    img.src = `/static/assets/invader/${invaderSeq[turn - 1]}.jpg`;
-    invaderCardBuild.append(img);
-
-    if (turn < 2) return;
-
-    img = document.createElement('img');
-    img.classList.add('game-card', 'game-card-invader');
-    img.src = `/static/assets/invader/${invaderSeq[turn - 2]}.jpg`;
-    invaderCardRavage.append(img);
-
-    if (turn < 3) return;
-
-    img = document.createElement('img');
-    img.classList.add('game-card', 'game-card-invader');
-    img.src = `/static/assets/invader/${invaderSeq[turn - 3]}.jpg`;
-    invaderCardFourth.append(img);
 }
 
 function updateInvaderCardExplore() {
