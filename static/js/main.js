@@ -359,7 +359,7 @@ function generateBadge(terrain) {
     // Terrain should be single character
     // 'u' means unknown terrain
     // 'n' means none
-    let b = document.createElement('span');
+    let b = $(document.createElement('span'));
     b.classList.add('badge');
     
     switch (terrain) {
