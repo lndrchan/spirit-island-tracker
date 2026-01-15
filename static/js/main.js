@@ -246,6 +246,7 @@ function setPhase(index) {
         let listItemHeading = $('<b></b>').addClass('phase-list-title');
 
         if (i == 1) {
+            // Second item in list is current phase. 
             listItem.addClass('list-group-item-dark');
         }
 
