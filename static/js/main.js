@@ -49,8 +49,7 @@ var fearSeqIndex = 0;
 var eventSeq = Array(62);
 var eventSeqIndex = 0;
 
-// To store serialised game state for gamesaves persisting between sessions
-var state = [];
+var ls = window.localStorage;
 
 // Initialisations
 jQuery(function() {
