@@ -356,6 +356,7 @@ function generateSeq(n) {
 function generateBadge(terrain) {
     // Terrain should be single character
     // 'u' means unknown terrain
+    // 'n' means none
     let b = document.createElement('span');
     
     switch (terrain) {
@@ -380,6 +381,10 @@ function updateInvaderBadge(showExplore) {
 
         //Explore badge first
         let levelIndex = turn - i;
+        if (levelIndex < 0) {
+            badges[i].append(generateBadge('n'))
+            continue;
+        }
         level = invaderLevelSeq[turn - i];
 
         if (i === 0 && !showExplore) {
