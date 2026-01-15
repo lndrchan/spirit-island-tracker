@@ -173,8 +173,6 @@ function removeFear() {
     if (fear < 0) {
         return;
     }
-
-    fearProgress.setAttribute('aria-valuenow', fear);
 }
 
 function earnFearCard() {
