@@ -415,8 +415,8 @@ function generateBadge(terrain) {
             b.html('Wetland');
             break;
         case 'u': 
-            b.css('background-color', '#484848');
-            b.css('color','#fff')
+            b.css('background-color', '#ffffff');
+            b.css('color','#000000')
             b.html('Unknown');
             break;
         case 'n': 
