@@ -257,7 +257,8 @@ function setPhase(index) {
         phaseListHTML += '</div>';
     }
 
-    
+    let listGroupItem = $(document.createElement('div')).addClass('');
+
 
     phaseList.html(phaseListHTML);
 
