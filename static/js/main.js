@@ -14,7 +14,7 @@ var phaseList = null;
 var phaseListLength = 0;
 var maxPhaseListHeight = 4;
 var phaseListDict = {
-    0: 'Spirit Phase    <ul><li>Growth options</li><li>Gain energy</li><li>Choose and pay for cards</li></ul> </div>',
+    0: 'Spirit Phase',
     1: 'Fast Powers',
     2: 'Blighted Island Effect',
     3: 'Events',
@@ -259,7 +259,14 @@ function setPhase(index) {
         if (phaseIndex === 0) {
             // Spirit phase special texts
             $('<ul></ul>')
-                .append()
+                .append('<li>Growth options</li>')
+                .append('<li>Gain energy</li>')
+                .append('<li>Choose and pay for cards</li>')
+                .appendTo(listItem);
+        }
+        else if (phaseIndex === 4) {
+            // Fear card phase special texts
+            
         }
     }   
     
