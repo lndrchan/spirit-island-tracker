@@ -12,7 +12,7 @@ var phase = 0;
 
 var phaseList = null;
 var phaseListLength = 0;
-var maxPhaseListHeight = 2;
+var maxPhaseListHeight = 4;
 var phaseListDict = {
     0: '<div> <h3 class="phase-list-title">Spirit Phase</h3>    <ul><li>Growth options</li><li>Gain energy</li><li>Choose and pay for cards</li></ul> </div>',
     1: '<h3 class="phase-list-title">Fast Powers</h3>',
@@ -237,28 +237,24 @@ function setPhase(index) {
     }
 
     let phaseListHTML = '';
-    
-    if (index >= 0 && index < phaseListLength)
-        
-        phase = index;
-    else
-        phase = 0;
 
-        for (let i = 0; i < maxPhaseListHeight; i++) {
+    phase = index;
+    phase = 0;
 
-        if (i == 0) {
-            phaseListHTML += '<div class="list-group-item d-flex justify-content-between align-items-center list-group-item-dark">';
-        }
-        else {
-            phaseListHTML += '<div class="list-group-item d-flex justify-content-between align-items-center">';
+    for (let i = 0; i < maxPhaseListHeight; i++) {
+        let listGroupItem = $(document.createElement('div')).addClass('list-group-item d-flex justify-content-between align-items-center');
+
+        if (i == 1) {
+            listGroupItem.addClass('list-group-item-dark');
         }
 
         phaseListHTML += phaseListDict[(i + phase) % phaseListLength];
 
         phaseListHTML += '</div>';
-    }
 
-    let listGroupItem = $(document.createElement('div')).addClass('list-group-item d-flex justify-content-between align-items-center');
+    }   
+    
+
 
 
     phaseList.html(phaseListHTML);
