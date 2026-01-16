@@ -12,7 +12,7 @@ var phase = 0;
 
 var phaseList = null;
 var phaseListLength = 0;
-var maxPhaseListHeight = 5;
+var maxPhaseListHeight = 4;
 // Headings for phase list
 var phaseListDict = {
     0: 'Spirit Phase',
@@ -254,7 +254,7 @@ function updatePhaseList(index) {
     let children = phaseList.$('.list-group-item');
     for (let i = 0; i < children.length; i++) {
         if (i === 1) continue;
-        phaseList.remo
+        children[i].remove();
     }
 
     // Make phase list dynamic HTML
