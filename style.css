@@ -71,7 +71,7 @@
 .right-bar
 {
     border: 1px solid gray;
-    border-radius: 24px;
+    border-radius: 12px;
     padding: 24px;
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;;
@@ -129,8 +129,8 @@
 
 .invader-card-label
 {
-    font-weight: bold;
-    font-size: 2em;
+    font-family: 'Cantora One';
+    font-size: 1.5em;
 }
 
 .hidden
