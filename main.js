@@ -251,7 +251,7 @@ function updatePhaseList(index) {
     phase = index;
 
 
-    let children = phaseList.$('.list-group-item');
+    let children = $('#phase-list').$('.list-group-item');
     for (let i = 0; i < children.length; i++) {
         if (i === 1) continue;
         children[i].remove();
