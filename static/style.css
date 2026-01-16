@@ -1,5 +1,11 @@
 @import "bootstrap/css/bootstrap.css";
 
+.cantora-one-regular {
+  font-family: "Cantora One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .main-container
 {
     padding: 24px;
