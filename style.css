@@ -131,6 +131,11 @@
     display: inline;
 }
 
+.fear-badge
+{
+    background-color: #3b3b3b;
+}
+
 .list-group-item
 {
     padding: 12px 12px 12px 12px;
