@@ -319,7 +319,7 @@ function updatePhaseList(newPhase) {
             let invaderPhaseDescription = $('<ul style="list-style-type:none; padding-left: 20px;"></ul>');
             invaderPhaseDescription.append('<li>Ravage: <span class="badge" id="phase-list-ravage-badge"> </span> </li>')
             invaderPhaseDescription.append('<li>Build: <span class="badge" id="phase-list-build-badge"> </span> </li>')
-            
+            if (invaderSeq[turn][0] === 2 && invaderSeq[turn][1] != 'c')
             invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> </li>')
                 .appendTo(listItem);
         }
