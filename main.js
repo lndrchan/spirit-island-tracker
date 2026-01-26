@@ -502,7 +502,7 @@ function generateBadge(terrain) {
     // 'u' means unknown terrain
     // 'n' means none
     let b = $(document.createElement('span'));
-    b.addClass('badge');
+    b.addClass('badge invader-badge');
     
     switch (terrain) {
         case 'j': 

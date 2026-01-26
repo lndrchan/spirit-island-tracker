@@ -184,6 +184,12 @@
     display: inline;
 }
 
+.invader-badge
+{
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
 .fear-badge
 {
     background-color: #3b3b3b;
