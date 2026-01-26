@@ -361,7 +361,13 @@ function setup() {
     adversary = $('input[name="adversary"]:checked').val();
     adversaryLevel = $('#adversaryLevel').val() || 0;
 
-    fearMax = playerCount * 4;
+    // England 6 special rule
+    if (adversary === 'england' && adversaryLevel === '6') {
+        fearMax = playerCount*5;
+    } else {
+        fearMax = playerCount * 4;
+    }
+
     fear = 0;
 
     invaderLevelSeq = adversaryConfig[adversary].invader[adversaryLevel];
