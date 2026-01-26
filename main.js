@@ -33,7 +33,7 @@ var leftBarFearBadge = null;
 var phaseListFearBadge = null;
 var fear = 0;
 var earnedFearCards = 0;
-var fearMax = 8;
+var fearMax = 0;
 var fearLevelSeq = [];
 
 var cardDisplay = null;
