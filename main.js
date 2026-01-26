@@ -381,7 +381,7 @@ function save() {
     const gameData = {
         playerCount: playerCount,
         adversary: adversary,
-        adversaryLevel: $('#adversaryLevel').val() || 0,
+        adversaryLevel: adversaryLevel,
         expansions: getSelectedExpansions(),
         createdAt: new Date().toISOString(),
         currentPhase: 0
