@@ -281,7 +281,7 @@ function advancePhase(count) {
         // Make heading
         let heading = $('<b></b>')
             .addClass('phase-list-title')
-            .html(phaseListDict[phaseIndex])
+            .html(phaseListDict[phase])
             .appendTo(listItem);
 
         if (i == 1) {
