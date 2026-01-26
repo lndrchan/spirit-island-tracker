@@ -256,89 +256,91 @@ function drawCard(type) {
 }
 
 // Code to update phase list DOM, used by nextStep function
-function advancePhaseList() {
+function advancePhaseList(count) {
 
-    phase = (phase + 1) % phaseListLength;
+    for (let i = 0; i < count; i++) {
+        phase = (phase + 1) % phaseListLength;
 
-    let children = $('.list-group-item', phaseList);
-    children[0].remove();
+        let children = $('.list-group-item', phaseList);
+        children[0].remove();
 
-    children[0].removeClass('list-group-item-dark');
-    $('.phase-list-title', children[0]).addClass('text-body-tertiary');
-    children[1].addClass('list-group-item-dark');
+        children[0].removeClass('list-group-item-dark');
+        $('.phase-list-title', children[0]).addClass('text-body-tertiary');
+        children[1].addClass('list-group-item-dark');
 
-    // Make list item container
-    let listItem = $(document.createElement('div'))
-        .addClass('list-group-item d-flex justify-content-between align-items-center');
+        // Make list item container
+        let listItem = $(document.createElement('div'))
+            .addClass('list-group-item d-flex justify-content-between align-items-center');
 
-    // Make heading
-    let heading = $('<b></b>')
-        .addClass('phase-list-title')
-        .html(phaseListDict[phaseIndex])
-        .appendTo(listItem);
-
-    if (i == 1) {
-        // Second item in list is current phase. 
-        listItem.addClass('list-group-item-dark');
-    }
-
-    if (phase === 0) {
-        // Spirit phase special texts
-        listItem.removeClass('d-flex');
-        $('<ul></ul>')
-            .append('<li>Growth options</li>')
-            .append('<li>Gain energy</li>')
-            .append('<li>Choose and pay for cards</li>')
+        // Make heading
+        let heading = $('<b></b>')
+            .addClass('phase-list-title')
+            .html(phaseListDict[phaseIndex])
             .appendTo(listItem);
-    }
-    else if (phase === 4) {
-        // Fear card phase special texts (fear badge)
-        $('<span></span>')
-            .addClass('badge badge-primary rounded-pill fear-badge')
-            .attr('id', 'phase-list-fear-badge')
-            .appendTo(listItem);
-        if (earnedFearCards === 0) {
-            heading.addClass('text-body-tertiary');
-        }
-    }
-    else if (phase === 5) {
-        // Invader phase texts
-        listItem.removeClass('d-flex');
-        let invaderPhaseDescription = $('<ul style="list-style-type:none; padding-left: 20px;"></ul>');
-        invaderPhaseDescription.append('<li>Ravage: <span class="badge" id="phase-list-ravage-badge"> </span> </li>')
-        invaderPhaseDescription.append('<li>Build: <span class="badge" id="phase-list-build-badge"> </span> </li>')
-        if (invaderSeq[turn][0] === 2 && invaderSeq[turn][1] != 'c') {
-            invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> + Escalation</li>')
-        }
-        else {
-            invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> </li>')
-        }
-        invaderPhaseDescription.appendTo(listItem);
-    }
-    else if (phase === 6) {
-        // Grey text out if game just started (skipping)
-        if (turn === 0) {
-            heading.addClass('text-body-tertiary');
-        }
-    }
-    else if (phase === 7) {
-        if (turn === 0) {
-            heading.addClass('text-body-tertiary');
-        }
-    }
 
-    phaseListFearBadge = $('#phase-list-fear-badge');
-    updateFearBadge();
+        if (i == 1) {
+            // Second item in list is current phase. 
+            listItem.addClass('list-group-item-dark');
+        }
 
-    // Add generated list item to phase list DOM
-    listItem.appendTo(phaseList);
+        if (phase === 0) {
+            // Spirit phase special texts
+            listItem.removeClass('d-flex');
+            $('<ul></ul>')
+                .append('<li>Growth options</li>')
+                .append('<li>Gain energy</li>')
+                .append('<li>Choose and pay for cards</li>')
+                .appendTo(listItem);
+        }
+        else if (phase === 4) {
+            // Fear card phase special texts (fear badge)
+            $('<span></span>')
+                .addClass('badge badge-primary rounded-pill fear-badge')
+                .attr('id', 'phase-list-fear-badge')
+                .appendTo(listItem);
+            if (earnedFearCards === 0) {
+                heading.addClass('text-body-tertiary');
+            }
+        }
+        else if (phase === 5) {
+            // Invader phase texts
+            listItem.removeClass('d-flex');
+            let invaderPhaseDescription = $('<ul style="list-style-type:none; padding-left: 20px;"></ul>');
+            invaderPhaseDescription.append('<li>Ravage: <span class="badge" id="phase-list-ravage-badge"> </span> </li>')
+            invaderPhaseDescription.append('<li>Build: <span class="badge" id="phase-list-build-badge"> </span> </li>')
+            if (invaderSeq[turn][0] === 2 && invaderSeq[turn][1] != 'c') {
+                invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> + Escalation</li>')
+            }
+            else {
+                invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> </li>')
+            }
+            invaderPhaseDescription.appendTo(listItem);
+        }
+        else if (phase === 6) {
+            // Grey text out if game just started (skipping)
+            if (turn === 0) {
+                heading.addClass('text-body-tertiary');
+            }
+        }
+        else if (phase === 7) {
+            if (turn === 0) {
+                heading.addClass('text-body-tertiary');
+            }
+        }
 
-    // Update variables to newly generated phase list DOM
-    ravageBadge = $('#phase-list-ravage-badge');
-    buildBadge = $('#phase-list-build-badge');
-    exploreBadge = $('#phase-list-explore-badge');
-    updateInvaderBadge();
+        phaseListFearBadge = $('#phase-list-fear-badge');
+        updateFearBadge();
 
+        // Add generated list item to phase list DOM
+        listItem.appendTo(phaseList);
+
+        // Update variables to newly generated phase list DOM
+        ravageBadge = $('#phase-list-ravage-badge');
+        buildBadge = $('#phase-list-build-badge');
+        exploreBadge = $('#phase-list-explore-badge');
+        updateInvaderBadge();
+
+    }
 }
 
 function setup() {
@@ -378,7 +380,7 @@ function setup() {
     generateInvaderSeq(invaderLevelSeq);
 
     //Start from first invader phase (explore only)
-    advancePhaseList();
+    advancePhaseList(4);
     nextStep();
 }
 
