@@ -8,6 +8,8 @@
 // 6: Slow power
 // 7: time passes
 
+const { event } = require("jquery");
+
 var phase = 0;
 var playerCount = 0;
 var adversary = '';
@@ -392,10 +394,14 @@ function setup() {
         playerCount: $('input[name="playerCount"]:checked').val(),
         adversary: $('input[name="adversary"]:checked').val(),
         adversaryLevel: $('#adversaryLevel').val() || 0,
+        fearSeq: fearSeq,
+        fearSeqIndex: fearSeqIndex,
+        eventSeq: eventSeq,
+        eventSeqIndex: eventSeqIndex,
         phase: phase
     };
     
-    localStorage.setItem('spiritIslandGame', JSON.stringify(gameData));
+    localStorage.setItem('gameData', JSON.stringify(gameData));
     console.log('Game setup saved:', gameSetup);
 
     /*
