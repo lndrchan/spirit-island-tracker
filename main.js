@@ -377,11 +377,11 @@ function setup() {
     console.log(invaderLevelSeq.length);
 
     // Fall back to lower level if undefined (same as level below)
-    for (let i = adversaryLevel; invaderLevelSeq.length != 0 || i === 0; i--) {
+    for (let i = adversaryLevel; invaderLevelSeq.length === 0 || i === 0; i--) {
         invaderLevelSeq = adversaryConfig[adversary].invader[i];
         if (i === 0) invaderLevelSeq = [1,1,1,2,2,2,2,3,3,3,3,3]; // Default sequence
     }
-    for (let i = adversaryLevel; fearLevelSeq.length != 0 || i === 0; i--) {
+    for (let i = adversaryLevel; fearLevelSeq.length === 0 || i === 0; i--) {
         fearLevelSeq = adversaryConfig[adversary].fear[i];
         if (i === 0) fearLevelSeq = [3,3,3]; // Default sequence
     }
