@@ -403,6 +403,7 @@ function load() {
         adversaryLevel = gameData.adversaryLevel;
         phase = gameData.phase;
     }
+    
 }
 
 function startNewGame() {
