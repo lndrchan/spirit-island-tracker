@@ -11,5 +11,8 @@ Turns are automatically tracked and advanced with a single button press. The ind
 Amount of fear tokens earned and fear cards earned are dynamically displayed on the left pane, and resolved when the turn tracker reaches the fear card phase. 
 
 ##### Card Drawing
-Fear cards and event cards are automatically drawn when the corr
+Fear cards and event cards are automatically drawn when the corresponding phases have been reached. 
+
+##### Special Actions
+Actions that influence the setup of the invader board (e.g. England 6, )
 
