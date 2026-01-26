@@ -262,7 +262,7 @@ function advancePhase(count) {
 
     // If phase list empty, populate it before anything else
     if ($('.list-group-item', phaseList).length <= 0) {
-        
+
     }
 
     for (let i = 0; i < count; i++) {
@@ -289,11 +289,6 @@ function advancePhase(count) {
             .addClass('phase-list-title')
             .html(phaseListDict[phase])
             .appendTo(listItem);
-
-        if (i == 1) {
-            // Second item in list is current phase. 
-            listItem.addClass('list-group-item-dark');
-        }
 
         if (phase === 0) {
             // Spirit phase special texts
