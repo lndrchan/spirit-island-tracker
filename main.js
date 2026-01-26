@@ -280,14 +280,6 @@ function advancePhase(count) {
             children[1].classList.add('list-group-item-dark');
         }
 
-        
-
-        // Make heading
-        let heading = $('<b></b>')
-            .addClass('phase-list-title')
-            .html(phaseListDict[phase])
-            .appendTo(listItem);
-
         phaseListFearBadge = $('#phase-list-fear-badge');
         updateFearBadge();
 
@@ -304,6 +296,17 @@ function advancePhase(count) {
 }
 
 function generatePhastListItem(index) {
+
+    // Make list item container
+    let listItem = $(document.createElement('div'))
+        .addClass('list-group-item d-flex justify-content-between align-items-center');
+
+    // Make heading
+    let heading = $('<b></b>')
+        .addClass('phase-list-title')
+        .html(phaseListDict[phase])
+        .appendTo(listItem);
+        
     if (phase === 0) {
         // Spirit phase special texts
         listItem.removeClass('d-flex');
