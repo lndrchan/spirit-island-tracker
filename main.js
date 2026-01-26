@@ -270,7 +270,7 @@ function advancePhase(count) {
             children[0].remove();
 
             children[0].classList.remove('list-group-item-dark');
-            $('.phase-list-title', children[0]).classList.add('text-body-tertiary');
+            $('.phase-list-title', children[0]).addClass('text-body-tertiary');
             children[1].classList.add('list-group-item-dark');
         }
         
