@@ -8,7 +8,8 @@ Welcome to Spirit Island Toolbox. This is a webapp created to replace the invade
 Turns are automatically tracked and advanced with a single button press. The indicator pane updates dynamically depending on what is coming next, including invader actions and adversary-specific actions. 
 
 ##### Fear Tracking
-Amount of fear earned and fear cards earned are dynamically displayed and resolved in the turn tracker. 
+Amount of fear tokens earned and fear cards earned are dynamically displayed on the left pane, and resolved when the turn tracker reaches the fear card phase. 
 
 ##### Card Drawing
+Fear cards and event cards are automatically drawn when the corr
 
