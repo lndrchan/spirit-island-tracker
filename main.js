@@ -119,7 +119,7 @@ $(function() {
     // Logic about game setup. 
 
     // If localstorage info present, read them via init(). Fill in blanks by init generation. 
-    if (ls.getItem('game')) {
+    if (ls.getItem('game') && confirm('Saved game found. Do you want to resume the previous game?')) {
         load();
     }
     // If no localstorage info, initiate setup popup
