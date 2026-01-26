@@ -90,6 +90,8 @@ function init() {
 
     phaseList = $('#phase-list');
     fearProgress = $('#fear-progress');
+    cardDisplay = $('#main-card-display');
+    leftBarFearBadge = $('#left-bar-fear-badge');
 
     $('#btn-next-phase').on('click', function() {
         nextStep();
@@ -131,14 +133,6 @@ function init() {
             $('#gameSetupModal').modal('hide');
         }
     });
- 
-    $('#btn-add-fear').on('click', function() {
-        addFear();
-    });
-
-    cardDisplay = $('#main-card-display');
-
-    leftBarFearBadge = $('#left-bar-fear-badge');
 
     //Start from first invader phase (explore only)
     updatePhaseList(4);
