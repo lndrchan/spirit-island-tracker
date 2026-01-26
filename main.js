@@ -9,6 +9,7 @@
 // 7: time passes
 
 var phase = 0;
+var playerCount = 0;
 
 var phaseList = null;
 var phaseListLength = 0;
@@ -378,7 +379,7 @@ function updatePhaseList(newPhase) {
 
 function save() {
     const gameData = {
-        playerCount: $('input[name="playerCount"]:checked').val(),
+        playerCount: playerCount,
         adversary: $('input[name="adversary"]:checked').val(),
         adversaryLevel: $('#adversaryLevel').val() || 0,
         expansions: getSelectedExpansions(),
