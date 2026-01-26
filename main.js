@@ -352,18 +352,6 @@ function updatePhaseList(newPhase) {
     }   
 }
 
-function save() {
-    const gameData = {
-        playerCount: playerCount,
-        adversary: adversary,
-        adversaryLevel: adversaryLevel,
-        phase: phase
-    };
-    
-    localStorage.setItem('gameData', JSON.stringify(gameData));
-    console.log('gameData saved:', gameData);
-}
-
 function setup() {
 
     ls.clear();
@@ -395,9 +383,20 @@ function setup() {
     nextStep();
 }
 
+function save() {
+    const gameData = {
+        playerCount: playerCount,
+        adversary: adversary,
+        adversaryLevel: adversaryLevel,
+        phase: phase
+    };
+    
+    localStorage.setItem('gameData', JSON.stringify(gameData));
+    console.log('gameData saved:', gameData);
+}
+
 function load() {
     let gameData = JSON.parse(localStorage.getItem('gameData'));
-    
 }
 
 function startNewGame() {
