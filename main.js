@@ -79,9 +79,6 @@ $(function() {
 });
 
 function init() {
-    fearSeq = generateSeq(50);
-    eventSeq = generateSeq(62);
-    generateInvaderSeq(invaderLevelSeq);
 
     invaderCardExplore = $('#invader-card-explore');
     invaderCardBuild = $('#invader-card-build');
@@ -386,6 +383,10 @@ function save() {
 function setup() {
 
     ls.clear();
+
+    fearSeq = generateSeq(50);
+    eventSeq = generateSeq(62);
+    generateInvaderSeq(invaderLevelSeq);
 
     const gameData = {
         playerCount: $('input[name="playerCount"]:checked').val(),
