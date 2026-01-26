@@ -360,8 +360,8 @@ function setup() {
     adversary = $('input[name="adversary"]:checked').val();
     adversaryLevel = $('#adversaryLevel').val() || 0;
 
-    invaderLevelSeq = adversaryConfig[adversary][invader][adversaryLevel];
-    console.log(adversaryConfig[adversary][invader])
+    invaderLevelSeq = adversaryConfig[adversary].invader[adversaryLevel];
+    console.log(adversaryConfig[adversary].invader)
 
     fearSeq = generateSeq(50);
     eventSeq = generateSeq(62);
