@@ -399,6 +399,7 @@ function load() {
     let gameData = JSON.parse(localStorage.getItem('gameData'));
     if (gameData) {
         playerCount = gameData.playerCount;
+        adversary = gameData.adversary;
     }
 }
 
