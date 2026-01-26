@@ -380,21 +380,6 @@ function setup() {
     eventSeq = generateSeq(62);
     generateInvaderSeq(invaderLevelSeq);
 
-
-    const gameData = {
-        playerCount: playerCount,
-        adversary: adversary,
-        adversaryLevel: adversaryLevel,
-        invaderSeq: invaderSeq,
-        fearSeq: fearSeq,
-        fearSeqIndex: fearSeqIndex,
-        eventSeq: eventSeq,
-        eventSeqIndex: eventSeqIndex,
-        phase: phase
-    };
-    
-    localStorage.setItem('gameData', JSON.stringify(gameData));
-
     //Start from first invader phase (explore only)
     updatePhaseList(4);
     nextStep();
@@ -405,6 +390,11 @@ function save() {
         playerCount: playerCount,
         adversary: adversary,
         adversaryLevel: adversaryLevel,
+        invaderSeq: invaderSeq,
+        fearSeq: fearSeq,
+        fearSeqIndex: fearSeqIndex,
+        eventSeq: eventSeq,
+        eventSeqIndex: eventSeqIndex,
         phase: phase
     };
     
