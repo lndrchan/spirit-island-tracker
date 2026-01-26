@@ -307,7 +307,7 @@ function generatePhaseListItem(index) {
     // Make heading
     let heading = $('<b></b>')
         .addClass('phase-list-title')
-        .html(phaseListDict[phase])
+        .html(phaseListDict[index])
         .appendTo(listItem);
         
     if (index === 0) {
