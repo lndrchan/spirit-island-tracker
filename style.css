@@ -47,6 +47,7 @@
 .invader-card-area
 {
     height: 100%;
+    flex: auto;
     text-align: center;
 }
 
