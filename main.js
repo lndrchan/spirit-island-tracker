@@ -364,8 +364,12 @@ function setup() {
     invaderLevelSeq = adversaryConfig[adversary].invader[adversaryLevel];
     fearLevelSeq = adversaryConfig[adversary].fear[adversaryLevel];
 
+    // Fall back to lower level if undefined (same as level below)
     for (let i = adversaryLevel; invaderLevelSeq.length != 0; i--) {
         invaderLevelSeq = adversaryConfig[adversary].invader[i];
+    }
+    for (let i = adversaryLevel; fearLevelSeq.length != 0; i--) {
+        fearLevelSeq = adversaryConfig[adversary].fear[i];
     }
 
     fearSeq = generateSeq(50);
