@@ -361,7 +361,7 @@ function save() {
     };
     
     localStorage.setItem('gameData', JSON.stringify(gameData));
-    console.log('Game setup saved:', gameData);
+    console.log('gameData saved:', gameData);
 }
 
 function setup() {
