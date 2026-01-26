@@ -418,8 +418,10 @@ function load() {
 }
 
 function startNewGame() {
-    
-    
+    if (confirm('Start a new game? This will erase your current game.')) {
+        localStorage.clear();
+        location.reload();
+    }
 }
 
 function clearCardDisplay() {
