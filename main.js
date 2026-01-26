@@ -371,7 +371,7 @@ function setup() {
     }
     for (let i = adversaryLevel; fearLevelSeq.length != 0 || i === 0; i--) {
         fearLevelSeq = adversaryConfig[adversary].fear[i];
-        
+        if (i === 0) fearLevelSeq = [3,3,3];
     }
 
     fearSeq = generateSeq(50);
