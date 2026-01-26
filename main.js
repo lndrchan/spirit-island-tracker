@@ -258,16 +258,12 @@ function drawCard(type) {
 // Code to update phase list DOM, used by nextStep function
 function advancePhaseList() {
 
+    phase = (phase + 1) % phaseListLength;
+
     let children = $('.list-group-item', phaseList);
     children[0].remove();
     children[0].removeClass('list-group-item-dark');
     children[1].addClass('list-group-item-dark');
-
-    let phaseIndex = 0;
-
-    phaseIndex = (i + phase - 1) % phaseListLength;
-
-    if (phaseIndex < 0) phaseIndex = 7;
 
     // Make list item container
     let listItem = $(document.createElement('div'))
