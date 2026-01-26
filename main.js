@@ -400,6 +400,8 @@ function load() {
     if (gameData) {
         playerCount = gameData.playerCount;
         adversary = gameData.adversary;
+        adversaryLevel = gameData.adversaryLevel;
+        phase = gameData.phase;
     }
 }
 
