@@ -10,6 +10,8 @@
 
 var phase = 0;
 var playerCount = 0;
+var adversary = '';
+var adversaryLevel = 0;
 
 var phaseList = null;
 var phaseListLength = 0;
@@ -382,12 +384,10 @@ function save() {
         playerCount: playerCount,
         adversary: adversary,
         adversaryLevel: adversaryLevel,
-        expansions: getSelectedExpansions(),
-        createdAt: new Date().toISOString(),
-        currentPhase: 0
+        phase: phase
     };
     
-    localStorage.setItem('spiritIslandGame', JSON.stringify(gameSetup));
+    localStorage.setItem('gameData', JSON.stringify(gameData));
     console.log('Game setup saved:', gameSetup);
 }
 
