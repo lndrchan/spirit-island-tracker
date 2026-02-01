@@ -743,13 +743,14 @@ function showExploreCard() {
 
 function advanceInvaderCard() {
     for (let i = 0; i < 3; i++) {
-        invaderCards[i][0] = invaderCards[i+1];
+        invaderCards[i] = invaderCards[i+1];
     }
+    invaderCards[3] = [];
     nextCard = invaderSeq[turn];
     if (!isNaN(nextCard[0])) {
-        invaderCards[3][0] = invaderSeq[turn][0];
+        invaderCards[3].push(invaderSeq[turn][0]);
     } else {
-        invaderCards[3][0] = invaderSeq[turn];
+        invaderCards[3].push(invaderSeq[turn]);
     }
 }
 
