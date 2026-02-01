@@ -666,7 +666,6 @@ function updateUI() {
     updateInvaderCard();
 
     // If in invader phase, show explore. 
-    if (phase === 5) {advanceInvaderCard(true)} else {advanceInvaderCard(false)}
     if (phase === 5) {updateInvaderBadge(true)} else {updateInvaderBadge(false)}
     
     $('#total-turn-count-display').html(invaderLevelSeq.length);
