@@ -56,6 +56,7 @@ var exploreBadge = null;
 
 var invaderLevelSeq = [];
 var invaderSeq = []; // [1s, 1w, 2c ... ]
+var invaderSeqIndex = 0;
 
 var turn = 0;
 var turnRandomNumber = 0;
