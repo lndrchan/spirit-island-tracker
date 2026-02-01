@@ -231,10 +231,8 @@ function addFear(count) {
             fear = 0;
         }
     }
-    
-    fearProgressBar.attr('style', 'width: ' + fear / maxFear * 100 + '%');
-    fearProgressBar.html(fear + ' / ' + maxFear);
 
+    updateUI();
     save();
 }
 
