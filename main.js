@@ -698,6 +698,8 @@ function updateUI() {
             displayCard('adversary', adversary);
         }
     }
+
+    updateInvaderCard();
     
     let redrawEnabledPhases = [3,4];
     if (redrawEnabledPhases.includes(phase)) {
