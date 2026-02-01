@@ -697,7 +697,11 @@ function updateUI() {
         $('#redraw-btn').attr('disabled','');
     }
 
-    
+    $('#last-event-card-btn').attr('disabled','');
+    let nextEventBtn = $('#next-event-card-btn');
+    let lastFearBtn = $('#last-fear-card-btn');
+    let nextFearBtn = $('#next-fear-card-btn');
+
 }
 
 function startNewGame() {
