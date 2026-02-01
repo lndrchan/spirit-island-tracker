@@ -679,7 +679,7 @@ function updateUI() {
         $('#adversary-name-display').html('None');
         $('#show-adversary-card-btn').hide();
     }
-    
+
     // Clear main display if moving away from draw card phase
     let clearDisplayPhases = [0, 1, 2, 5, 6, 7];
     if (clearDisplayPhases.includes(phase)) {
@@ -730,8 +730,6 @@ function clearInvaderCard() {
 }
 
 function updateInvaderCard(showExplore) {
-
-    clearInvaderCard();
 
     invaderCards = [invaderCardExplore, invaderCardBuild, invaderCardRavage, invaderCardFourth];
 
