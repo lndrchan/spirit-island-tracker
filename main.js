@@ -696,34 +696,6 @@ function updateUI() {
     } else {
         $('#redraw-btn').attr('disabled','');
     }
-
-    // Atrocious code that updates disabled status of card history buttons
-    // Will not touch again after finishing writing them
-    if (cardHistoryFearIndex === fearSeqIndex) {
-        $('#next-fear-card-btn').attr('disabled',''); 
-    } else {
-        $('#next-fear-card-btn').removeAttr('disabled');
-    }
-    if (cardHistoryFearIndex === 0) {
-        $('#last-fear-card-btn').attr('disabled',''); 
-    } else {
-        $('#last-fear-card-btn').removeAttr('disabled');
-    }
-    if (cardHistoryEventIndex === eventSeqIndex) {
-        $('#next-event-card-btn').attr('disabled',''); 
-    } else {
-        $('#next-event-card-btn').removeAttr('disabled');
-    }
-    if (cardHistoryEventIndex === 0) {
-        $('#last-event-card-btn').attr('disabled',''); 
-    } else {
-        $('#last-event-card-btn').removeAttr('disabled');
-    }
-    if (cardHistoryFearIndex === 0) $('#this-fear-card-btn').removeAttr('disabled');
-    if (cardHistoryEventIndex === 0) $('#this-event-card-btn').removeAttr('disabled');
-        
-    
-
 }
 
 function startNewGame() {
@@ -942,6 +914,31 @@ function displayCardHistory(type,step) {
             cardHistoryFearIndex += step;
             displayCard('fear', cardHistoryFearIndex);
     }
+
+    // Atrocious code that updates disabled status of card history buttons
+    // Will not touch again after finishing writing them
+    if (cardHistoryFearIndex === fearSeqIndex) {
+        $('#next-fear-card-btn').attr('disabled',''); 
+    } else {
+        $('#next-fear-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryFearIndex === 0) {
+        $('#last-fear-card-btn').attr('disabled',''); 
+    } else {
+        $('#last-fear-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryEventIndex === eventSeqIndex) {
+        $('#next-event-card-btn').attr('disabled',''); 
+    } else {
+        $('#next-event-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryEventIndex === 0) {
+        $('#last-event-card-btn').attr('disabled',''); 
+    } else {
+        $('#last-event-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryFearIndex === 0) $('#this-fear-card-btn').removeAttr('disabled');
+    if (cardHistoryEventIndex === 0) $('#this-event-card-btn').removeAttr('disabled');
 }
 
 function validateSetupForm() {
