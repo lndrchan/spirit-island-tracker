@@ -722,38 +722,24 @@ function clearCardDisplay() {
     cardDisplay.empty();
 }
 
-function clearInvaderCard() {
-    invaderCardExplore.empty();
-    invaderCardBuild.empty();
-    invaderCardRavage.empty();
-    invaderCardFourth.empty();
-}
-
 function updateInvaderCard(showExplore) {
 
     invaderCards = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
 
     // Start left to right
     for (let i = 0; i < 4; i++) {
-
-        invadercards[i].html(invadercards[i+1])
-        if (i === 0) {
-            let img = document.createElement('img');
-            img.classList.add('game-card', 'game-card-invader');
-            if (i === 0 && !showExplore) {
-                img.src = `./assets/invader/${invaderSeq[turn][0]}.jpg`;
-            }
-            else {
-                img.src = `./assets/invader/${invaderSeq[turn - i]}.jpg`;
-            }
-            invaderCardExplore.append(img);
-        }
-
-        
-        if (i > turn) return;
-
-        
+        invadercards[i].html(invadercards[i+1].html());
     }
+    invaderCardExplore.empty();
+    let img = document.createElement('img');
+    img.classList.add('game-card', 'game-card-invader');
+    if (i === 0 && !showExplore) {
+        img.src = `./assets/invader/${invaderSeq[turn][0]}.jpg`;
+    }
+    else {
+        img.src = `./assets/invader/${invaderSeq[turn - i]}.jpg`;
+    }
+    invaderCardExplore.append(img);
 }
 
 function generateInvaderSeq(levelSeq) {
