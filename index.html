@@ -322,13 +322,13 @@
 													<span style="vertical-align: middle;">Event History</span> 
 												</div>
 												<div class="col" style="text-align: right;">
-													<button type="button" id="last-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', -1)">
+													<button type="button" id="last-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('event', -1)">
 														<i class="bi bi-caret-left-fill"></i>
 													</button>
-													<button type="button" id="next-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', 1)">
+													<button type="button" id="next-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('event', 1)">
 														<i class="bi bi-caret-right-fill"></i>
 													</button>	
-													<button type="button" id="this-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', 0)" disabled>
+													<button type="button" id="this-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('event', 0)" disabled>
 														<i class="bi bi-caret-right-square-fill" style="font-size: 1rem;"></i>
 													</button>
 												</div>
@@ -338,13 +338,13 @@
 													<span style="vertical-align: middle;">Fear History</span> 
 												</div> 
 												<div class="col" style="text-align: right;">
-													<button type="button" id="last-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', -1)">
+													<button type="button" id="last-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('fear', -1)">
 														<i class="bi bi-caret-left-fill"></i>
 													</button>
-													<button type="button" id="next-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', 1)">
+													<button type="button" id="next-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('fear', 1)">
 														<i class="bi bi-caret-right-fill"></i>
 													</button>
-													<button type="button" id="this-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', 0)" disabled>
+													<button type="button" id="this-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="displayCardHistory('fear', 0)" disabled>
 														<i class="bi bi-caret-right-square-fill" style="font-size: 1rem;"></i>
 													</button>
 												</div>
