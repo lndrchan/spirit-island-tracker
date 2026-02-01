@@ -283,6 +283,10 @@ function earnFearCard() {
     updateFearBadge();
 }
 
+function addFearCard(count) {
+    for (let i = 0; i < count; i++) fear
+}
+
 function removeFearCard() {
     earnedFearCards--;
     fearLevelSeq[terrorLevel]++;
