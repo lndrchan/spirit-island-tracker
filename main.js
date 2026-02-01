@@ -602,6 +602,7 @@ function save() {
         fearLevelSeq: fearLevelSeq,
         terrorLevel: terrorLevel,
         cardDisplayHTML: cardDisplay.html(),
+        invaderCardHTML: [invaderCardFourth.html(), invaderCardRavage.html(), invaderCardBuild.html(), invaderCardExplore.html()],
         cardHistoryEventIndex: cardHistoryEventIndex,
         cardHistoryFearIndex: cardHistoryFearIndex,
         fracturedDaysPeekedType: fracturedDaysPeekedType
