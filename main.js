@@ -904,6 +904,7 @@ function displayCardHistory(type,step) {
         case 'event': 
             cardHistoryEventIndex = eventSeqIndex-1;
             displayCard('event', eventSeq[eventSeqIndex-1]);
+            
             return;
         case 'fear': 
             cardHistoryFearIndex = fearSeqIndex-1;
