@@ -1036,9 +1036,10 @@ function fracturedDaysPower(deck, strength) {
         // Return specified card to bottom of respective deck. 
 
         if (deck === 0) {
+            // Does not work. Need fixing
             invaderSeqFirst = invaderSeq.shift();
             invaderSeq.push(invaderSeqFirst);
-            advanceInvaderCard();
+            updateInvaderCard();
             alert('The top Invader Card has been moved to the bottom of the deck. ')
         }
         else if (deck === 1) {
