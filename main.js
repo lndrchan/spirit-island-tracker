@@ -61,6 +61,10 @@ var eventSeqIndex = 0;
 
 var saveIndex = 0;
 
+var cardHistoryEventIndex;
+var cardHistoryFearIndex;
+
+
 // Special action-specific variables
 
 var fracturedDaysPeekedType = 0; // 0 (invader) or 1 (event)
@@ -321,6 +325,7 @@ function drawCard(type) {
     {
         case 'fear':
             displayCard('fear', fearSeq[fearSeqIndex])
+            cardHistoryFearIndex = fearSeqIndex;
             fearSeqIndex++;
             if (fearSeqIndex >= fearSeq.length) {
                 fearSeq = generateSeq(fearSeq.length);
@@ -329,6 +334,7 @@ function drawCard(type) {
             break;
         case 'event':
             displayCard('event', eventSeq[eventSeqIndex])
+            cardHistoryEventIndex = eventSeqIndex;
             if (eventSeq[eventSeqIndex] === 1) alert(`Slave Rebellion has been drawn. After performing the printed actions, please choose how it will be resolved under the 'Special Actions' menu. `)
             eventSeqIndex++;
             if (eventSeqIndex >= eventSeq.length) {
@@ -606,6 +612,8 @@ function save() {
         fearLevelSeq: fearLevelSeq,
         terrorLevel: terrorLevel,
         cardDisplayHTML: cardDisplay.html(),
+        cardHistoryEventIndex: cardHistoryEventIndex,
+        cardHistoryFearIndex: cardHistoryFearIndex,
         fracturedDaysPeekedType: fracturedDaysPeekedType
     };
     
@@ -643,6 +651,9 @@ function load(index) {
     terrorLevel = gameData.terrorLevel;
 
     cardDisplay.html(gameData.cardDisplayHTML);
+
+    cardHistoryEventIndex = gameData.cardHistoryEventIndex;
+    cardHistoryFearIndex = gameData.cardHistoryFearIndex;
 
     fracturedDaysPeekedType = gameData.fracturedDaysPeekedType;
 
@@ -685,6 +696,33 @@ function updateUI() {
     } else {
         $('#redraw-btn').attr('disabled','');
     }
+
+    // Atrocious code that updates disabled status of card history buttons
+    // Will not touch again after finishing writing them
+    if (cardHistoryFearIndex === fearSeqIndex) {
+        $('#next-fear-card-btn').attr('disabled',''); 
+    } else {
+        $('#next-fear-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryFearIndex === 0) {
+        $('#last-fear-card-btn').attr('disabled',''); 
+    } else {
+        $('#last-fear-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryEventIndex === eventSeqIndex) {
+        $('#next-event-card-btn').attr('disabled',''); 
+    } else {
+        $('#next-event-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryEventIndex === 0) {
+        $('#last-event-card-btn').attr('disabled',''); 
+    } else {
+        $('#last-event-card-btn').removeAttr('disabled');
+    }
+    if (cardHistoryFearIndex === 0) $('#this-fear-card-btn').removeAttr('disabled');
+    if (cardHistoryEventIndex === 0) $('#this-event-card-btn').removeAttr('disabled');
+        
+    
 
 }
 
@@ -881,6 +919,27 @@ function updateInvaderBadge(showExplore) {
         
     }
     
+}
+
+function cardHistory(type,step) {
+    if (step === 0) {
+        switch (type){
+        case 'event': 
+            displayCard('event', eventSeq[eventSeqIndex-1]);
+            return;
+        case 'fear': 
+            displayCard('fear', fearSeq[fearSeqIndex-1]);
+            return;
+        }
+    }
+    switch (type){
+        case 'event': 
+            cardHistoryEventIndex += step;
+            displayCard('event', cardHistoryEventIndex);
+        case 'fear': 
+            cardHistoryFearIndex += step;
+            displayCard('fear', cardHistoryFearIndex);
+    }
 }
 
 function validateSetupForm() {

@@ -9,6 +9,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,10 +315,40 @@
 
 										<hr>
 
-										<div>
+										<div style="text-align: left;">
 											<button type="button" id="show-adversary-card-btn" class="btn btn-secondary btn-sm" onclick="showAdversaryCard()">Adversary Card</button>
-											<button type="button" id="show-recent-event-btn" class="btn btn-secondary btn-sm" onclick="displayCard('event',eventSeq[eventSeqIndex-1])">Event Card</button>
-											<button type="button" id="show-recent-fear-btn" class="btn btn-secondary btn-sm" onclick="displayCard('fear',fearSeq[fearSeqIndex-1])">Fear Card</button>
+											<div class="row">
+												<div class="col">
+													<span style="vertical-align: middle;">Event History</span> 
+												</div>
+												<div class="col" style="text-align: right;">
+													<button type="button" id="last-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', -1)">
+														<i class="bi bi-caret-left-fill"></i>
+													</button>
+													<button type="button" id="next-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', 1)">
+														<i class="bi bi-caret-right-fill"></i>
+													</button>	
+													<button type="button" id="this-event-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('event', 0)" disabled>
+														<i class="bi bi-caret-right-square-fill" style="font-size: 1rem;"></i>
+													</button>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col">
+													<span style="vertical-align: middle;">Fear History</span> 
+												</div> 
+												<div class="col" style="text-align: right;">
+													<button type="button" id="last-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', -1)">
+														<i class="bi bi-caret-left-fill"></i>
+													</button>
+													<button type="button" id="next-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', 1)">
+														<i class="bi bi-caret-right-fill"></i>
+													</button>
+													<button type="button" id="this-fear-card-btn" class="btn btn-secondary btn-sm history-btn" onclick="cardHistory('fear', 0)" disabled>
+														<i class="bi bi-caret-right-square-fill" style="font-size: 1rem;"></i>
+													</button>
+												</div>
+											</div>
 										</div>
 										
 									</div>	

@@ -114,6 +114,13 @@
     display: inline;
 }
 
+.history-btn 
+{
+    height: 2em;
+    font-size: 0.75em;
+    padding: 0px 6px 0px 6px;
+}
+
 .remove-fear-btn
 {
     height: 2em;
