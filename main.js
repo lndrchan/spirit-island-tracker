@@ -894,6 +894,11 @@ function updateInvaderBadge(showExplore) {
 }
 
 function displayCardHistory(type,step) {
+    let lastEventBtn = $('#last-event-card-btn');
+    let nextEventBtn = $('#next-event-card-btn');
+    let lastFearBtn = $('#last-fear-card-btn');
+    let nextFearBtn = $('#next-fear-card-btn');
+
     if (step === 0) {
         switch (type){
         case 'event': 
