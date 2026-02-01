@@ -747,8 +747,7 @@ function advanceInvaderCard() {
     for (let i = 0; i < 3; i++) {
         invaderCards[i] = invaderCards[i+1];
     }
-    invaderCardExplore.empty();
-    invaderCardExplore.append(img);
+
 }
 
 function generateInvaderCard(code) {
@@ -760,6 +759,13 @@ function generateInvaderCard(code) {
         img.attr('src', `./assets/invader/${stage}-back.jpg`);
     }
     return img;
+}
+
+function updateInvaderCard() {
+    invaderCardFourth.empty().append(invaderCards[0]);
+    invaderCardRavage.empty().append(invaderCards[1]);
+    invaderCardBuild.empty().append(invaderCards[2]);
+    invaderCardExplore.empty().append(invaderCards[3]);
 }
 
 function generateInvaderSeq(levelSeq) {
