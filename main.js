@@ -733,7 +733,7 @@ function advanceInvaderCard() {
     invaderCardExplore.empty();
     let img = document.createElement('img');
     img.classList.add('game-card', 'game-card-invader');
-    if (!showExplore) {
+
         let stage = invaderSeq[turn][0];
         if (!NaN(stage)) {
             img.src = `./assets/invader/${stage}.jpg`;
