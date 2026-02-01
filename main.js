@@ -608,7 +608,7 @@ function save() {
         fearLevelSeq: fearLevelSeq,
         terrorLevel: terrorLevel,
         cardDisplayHTML: cardDisplay.html(),
-        invaderCardsHTML: [invaderCardFourth.html(), invaderCardRavage.html(), invaderCardBuild.html(), invaderCardExplore.html()],
+        invaderCards: invaderCards,
         cardHistoryEventIndex: cardHistoryEventIndex,
         cardHistoryFearIndex: cardHistoryFearIndex,
         fracturedDaysPeekedType: fracturedDaysPeekedType
@@ -649,9 +649,7 @@ function load(index) {
 
     cardDisplay.html(gameData.cardDisplayHTML);
 
-    for (let i = 0; i < 4; i++) {
-        invaderCards[i].html(gameData.invaderCardsHTML[i]);
-    }
+    invaderCards = gameData.invaderCards;
 
     cardHistoryEventIndex = gameData.cardHistoryEventIndex;
     cardHistoryFearIndex = gameData.cardHistoryFearIndex;
