@@ -574,6 +574,7 @@ function setup() {
     }
     
     generateInvaderSeq(invaderLevelSeq);
+    invaderCards = [[],[],[],[invaderSeq[0]]];
 
     updateUI();
 
