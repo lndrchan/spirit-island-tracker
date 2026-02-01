@@ -747,7 +747,7 @@ function advanceInvaderCard() {
         invaderCards[i] = invaderCards[i+1];
     }
     invaderCards[3] = [];
-    nextCard = invaderSeq[turn];
+    nextCard = invaderSeq[invaderSeqIndex+1];
     if (!isNaN(nextCard[0])) {
         invaderCards[3].push(invaderSeq[turn][0]);
     } else {
