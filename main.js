@@ -153,6 +153,7 @@ function nextStep() {
 
     if (phase === 5 && turn === 0) {
         advancePhaseList(3); // Advance twice to skip to first spirit phase if it is turn 0
+        advanceInvaderCard();
         turn++;
         return;
     }
