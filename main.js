@@ -658,6 +658,8 @@ function load(index) {
 
     updatePhaseList();
     updateUI();
+    setupModal.modal('hide');
+    setupModal.attr('style','display:none;')
 
     console.log('Game data loaded:', saveIndex, gameData);
 }
@@ -681,7 +683,8 @@ function updateUI() {
     
     $('#total-turn-count-display').html(invaderLevelSeq.length);
     
-    $('#invader-level-sequence').html(invaderLevelSeq.slice(invaderSeqIndex-1).join(' '));
+    $('#turn-count-display').html(invaderSeqIndex);
+    $('#invader-level-sequence').html(invaderLevelSeq.slice(invaderSeqIndex).join(' '));
 
     $('#player-count-display').html(playerCount);
     if (adversary !== 'none') {
@@ -736,28 +739,39 @@ function clearCardDisplay() {
 
 function showExploreCard() {
     invaderCards[3] = [];
-    nextCard = invaderSeq[turn];
-    invaderCards[3].push(invaderSeq[turn]);
+    nextCard = invaderSeq[invaderSeqIndex];
+    invaderCards[3].push(nextCard);
     updateInvaderCard();
 }
 
 function advanceInvaderCard() {
     for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < invaderCards[i].length; j++) {
-            if (invaderCards[i][j] === 'ss') {
-                // TODO
+        let newArray = [];
+
+        for (let j = 0; j < invaderCards[i+1].length; j++) {
+            if (i === 0 && invaderCards[i+1][j] === 'ss') continue;
+            if (i === 1 && invaderCards[i][j] === 'ss') {
+                newArray.push('ss');
             }
+            newArray.push(invaderCards[i+1][j]);
         }
-        invaderCards[i] = invaderCards[i+1];
+
+        invaderCards[i] = newArray;
     }
+
     invaderCards[3] = [];
     nextCard = invaderSeq[invaderSeqIndex+1];
     if (!isNaN(nextCard[0])) {
-        invaderCards[3].push(invaderSeq[turn][0]);
+        invaderCards[3].push(nextCard[0]);
     } else {
-        invaderCards[3].push(invaderSeq[turn]);
+        invaderCards[3].push(nextCard);
     }
+
     invaderSeqIndex++;
+    if (invaderSeqIndex === invaderLevelSeq.length) {
+        alert('You have reached the end of the Invader Deck. The Invaders have taken over the Island...')
+    }
+
     updateInvaderCard();
 }
 
@@ -865,6 +879,12 @@ function generateBadge(terrain) {
             b.css('color','#ffffff');
             b.html('Coastal Lands');
             break;
+        case 'ss': 
+            b.css('background-color', '#ffffff');
+            b.css('border-color', '#767167');
+            b.css('color','#767167');
+            b.html('Salt');
+            break;
         case 'u': 
             b.css('background-color', '#ffffff');
             b.css('color','#000000');
@@ -909,12 +929,15 @@ function updateInvaderBadge() {
         }
 
         for (let j = 0; j < invaderCards[i].length; j++) {
-            let code = invaderCards[i][j]; // e.g. 3mj
+            let code = invaderCards[i][j]; // e.g. 3mj, ss
             if (isNaN(code[0])) {
                 badges[i].append(generateBadge(code));
                 continue;
             }
-            if (code.length <= 1) exploreBadge.append(generateBadge('u'));
+            if (code.length <= 1) {
+                exploreBadge.append(generateBadge('u'));
+                continue;
+            } 
 
             // Else if code[0] is a number (stage)...
             level = code[0];
@@ -1103,19 +1126,5 @@ function fracturedDaysPower(deck, strength) {
 
         clearCardDisplay();
         cardDisplay.append(img);
-    }
-}
-
-function existInPhaseList(i) {
-
-    // Need to rewrite if phase list organisation changes later
-
-    if (phase >= 1 && phase <= phaseCount - phaseListDisplayLength + 1) {
-        // If phase list does not involve wrapping around
-        return (i >= 0 && i <= phaseCount - phaseListDisplayLength + 1);
-    }
-    else {
-        if (phase === 0) return (i === phaseCount - 1 || i < phaseListDisplayLength - 2);
-        else return (i >= phaseCount - 2 || i <= phaseListDisplayLength - 3);
     }
 }

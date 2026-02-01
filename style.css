@@ -34,66 +34,54 @@
     align-items: center;
 }
 
-.invader-area
-{
-    height: 40vh;
+/* Invader Area - Main Container */
+.invader-area {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    margin: 12px 0px 0px 0px;
     padding: 12px;
+    margin-top: 12px;
 }
 
-.invader-card-area
-{
+/* Invader Card Area */
+.invader-card-area {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
 }
 
-.invader-card-container
-{
+/* Invader Card Container */
+.invader-card-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px 20px;
+    padding: 0px 24px 0px 24px;
     border: 2px dashed rosybrown;
     border-radius: 8px;
-    background-color: rgba(139, 69, 19, 0.05);
-    min-height: 200px;
-    width: fit-content;
-}
-
-/* Card styling */
-.game-card-invader {
-    max-width: 120px;
-    height: auto;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Hover effect - bring card forward */
-.game-card-invader:hover {
-    z-index: 10 !important;
+    background-color: rgba(188, 143, 143, 0.1);
+    min-height: 200px;   
+    min-width: 150px;
 }
 
 /* Single card - centered */
 .invader-card-container .game-card-invader:only-child {
     margin: 0;
+    z-index: 1;
 }
 
-/* Multiple cards - overlapping */
+/* Multiple cards - overlapping effect */
 .invader-card-container .game-card-invader:not(:only-child) {
     margin-left: -70px;
     position: relative;
 }
 
+/* First card - no left margin */
 .invader-card-container .game-card-invader:not(:only-child):first-child {
     margin-left: 0;
-    z-index: 1;
 }
 
-/* Z-index stacking - each card goes on top of previous */
+/* Z-index stacking */
 .invader-card-container .game-card-invader:nth-child(1) { z-index: 1; }
 .invader-card-container .game-card-invader:nth-child(2) { z-index: 2; }
 .invader-card-container .game-card-invader:nth-child(3) { z-index: 3; }
@@ -101,32 +89,59 @@
 .invader-card-container .game-card-invader:nth-child(5) { z-index: 5; }
 .invader-card-container .game-card-invader:nth-child(6) { z-index: 6; }
 
-.invader-card-label
-{
+/* Card styling */
+.game-card-invader {
+    max-width: 120px;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.game-card-invader:hover {
+    transform: translateY(-8px) scale(1.05);
+    z-index: 100 !important;
+}
+
+/* Invader Card Arrow */
+.invader-card-arrow {
+    font-size: 3rem;
+    font-weight: bold;
+    color: rosybrown;
+    display: flex;
+    user-select: none;
+    transform: translateY(-4vh);
+}
+
+/* Invader Card Label */
+.invader-card-label {
     text-align: center;
     margin-top: 10px;
     font-weight: bold;
     font-size: 0.9rem;
-    color: rosybrown;
+    color: white;
     text-transform: uppercase;
 }
 
-.invader-card-arrow
-{
-    color: rosybrown;
-    display: flex;
-    align-items: center;
-    font-family: 'Cantora One';
-    font-size: 5em;
-    transform: translate(10%, -10%);
+/* Responsive - stack on smaller screens */
+@media (max-width: 768px) {
+    .invader-area {
+        flex-direction: column;
+    }
+    
+    .invader-card-arrow {
+        transform: rotate(90deg);
+        font-size: 2rem;
+        padding: 10px 0;
+    }
 }
 
 .game-card
 {
     border-radius: 12px;
     height: 80%;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 12px;
+    margin-right: 12px;
 }
 
 
@@ -247,7 +262,7 @@
 .main-area,
 .phase-list-container
 {
-    height: 55vh;
+    height: 60vh;
 }
 
 .phase-list
@@ -339,7 +354,8 @@
   border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
-#setup-modal .col-md-6 {
+#setup-modal {
+    font-size: larger;
     display: flex;
     align-items: center;
 }

@@ -23,7 +23,7 @@
     <body>
 
 		<!-- Game Setup Modal -->
-		<div class="modal fade" id="setup-modal" tabindex="-1" role="dialog" aria-labelledby="gameSetupModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal fade cantora-one" id="setup-modal" tabindex="-1" role="dialog" aria-labelledby="gameSetupModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
 				<div class="modal-content">
 					<div class="modal-header" style="justify-content: center;">
@@ -152,8 +152,9 @@
 										</select>
 										
 									</div>
-									<hr>
 									<!-- Expansions -->
+									<!--
+									<hr>
 									<div class="form-group mt-4">
 										<label class="font-weight-bold mb-3">Expansions Used</label>
 										<div class="form-check">
@@ -181,8 +182,10 @@
 											</label>
 										</div>
 									</div>
+									-->
 								</form>
 							</div>
+							
 
 							<!-- Preview Column -->
 							<div class="col-md-6">
@@ -210,8 +213,6 @@
 			<div class="row main-container">
 				<div class="col-md-3">
 					<div class="left-bar fear-panel-top">
-
-
 						<p id="fear-cards-remaining-container">Fear Cards Remaining:    
 							<span class="badge text-bg-dark fear-cards-remaining-badge">1</span> /
 							<span class="badge text-bg-dark fear-cards-remaining-badge">4</span> /
@@ -301,36 +302,24 @@
 
 								<div class="card container-glassmorphism right-bar-card" data-bs-theme="dark">
 									<div class="card-body">
-										<div class="row">
-											<div class="col-md-6">
-												<span style="vertical-align: middle;">Player Count</span> 
-											</div>
-											<div class="col-md-6" style="text-align: right;">
-												<span class="badge text-bg-dark" id="player-count-display">2</span> 
-											</div>
+										<div style="text-align: center; align-items: center;">
+											<span class="badge text-bg-dark" id="adversary-name-display"></span>
+											<button type="button" id="show-adversary-card-btn" class="btn btn-secondary btn-sm" onclick="showAdversaryCard()">Adversary Card</button>
 										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<span style="vertical-align: middle;">Turn</span> 
-											</div>
-											<div class="col-md-6" style="text-align: right;">
-												<span class="badge text-bg-dark" id="turn-count-display">1</span> / <span class="badge text-bg-dark" id="total-turn-count-display">9</span>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-6">
-												<span style="vertical-align: middle;">Adversary</span> 
-											</div>
-											<div class="col-md-6" style="text-align: right;">
-												<span class="badge text-bg-dark" id="adversary-name-display">Brandenburg-Prussia 6</span>
-											</div>
-										</div>
+										
 										<hr class="m-1">
 										<div style="text-align: center;">
 											<span style="vertical-align: middle;">Invader Deck Remaining</span> <br>
 											<span class="badge text-bg-dark" id="invader-level-sequence"></span>
 										</div>
-										<button type="button" id="show-adversary-card-btn" class="btn btn-secondary btn-sm" onclick="showAdversaryCard()">Adversary Card</button>
+										<div class="row">
+											<div class="col-md-6">
+												<span style="vertical-align: middle;">Progress</span> 
+											</div>
+											<div class="col-md-6" style="text-align: right;">
+												<span class="badge text-bg-dark" id="turn-count-display">1</span> / <span class="badge text-bg-dark" id="total-turn-count-display">9</span>
+											</div>								
+										</div>
 									</div>	
 								</div>
 
@@ -378,8 +367,8 @@
 						</div>
 					</div>
 
-					<div class="row invader-area container-glassmorphism">
-						<div class="col-md-2 invader-card-area">
+					<div class="invader-area container-glassmorphism">
+						<div class="invader-card-area">
 							<div class="invader-card-container" id="invader-card-fourth"> 
 								
 							</div>
@@ -388,11 +377,11 @@
 							</div>
 						</div>
 
-						<div class="col-md-1 invader-card-arrow">
-							&lt;
+						<div class="invader-card-arrow">
+							<i class="bi bi-caret-left-fill"></i>
 						</div>
 
-						<div class="col-md-2 invader-card-area">
+						<div class="invader-card-area">
 							<div class="invader-card-container" id="invader-card-ravage"> 
 								
 							</div>
@@ -401,11 +390,11 @@
 							</div>
 						</div>
 
-						<div class="col-md-1 invader-card-arrow">
-							&lt;
+						<div class="invader-card-arrow">
+							<i class="bi bi-caret-left-fill"></i>
 						</div>
 
-						<div class="col-md-2 invader-card-area">
+						<div class="invader-card-area">
 							<div class="invader-card-container" id="invader-card-build"> 
 								
 							</div>
@@ -414,11 +403,11 @@
 							</div>
 						</div>
 
-						<div class="col-md-1 invader-card-arrow">
-							&lt;
+						<div class="invader-card-arrow">
+							<i class="bi bi-caret-left-fill"></i>
 						</div>
 
-						<div class="col-md-2 invader-card-area">
+						<div class="invader-card-area">
 							<div class="invader-card-container" id="invader-card-explore"> 
 								
 							</div>
@@ -532,7 +521,7 @@
 								Bug Report / Feature Request
 							</a>
 							
-							<a href="https://ko-fi.com/yourusername" 
+							<a href="https://ko-fi.com/lndr0" 
 							target="_blank" 
 							class="btn btn-success btn-lg">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill me-2" viewBox="0 0 16 16">
