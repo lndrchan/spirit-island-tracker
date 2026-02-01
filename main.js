@@ -590,6 +590,7 @@ function save() {
         adversary: adversary,
         adversaryLevel: adversaryLevel,
         invaderSeq: invaderSeq,
+        invaderSeqIndex: invaderSeqIndex,
         invaderLevelSeq: invaderLevelSeq,
         fear: fear,
         fearSeq: fearSeq,
