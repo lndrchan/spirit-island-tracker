@@ -921,7 +921,7 @@ function updateInvaderBadge(showExplore) {
     
 }
 
-function cardHistory(type,step) {
+function displayCardHistory(type,step) {
     if (step === 0) {
         switch (type){
         case 'event': 
