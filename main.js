@@ -48,7 +48,7 @@ var invaderCardFourth;
 var invaderCardRavage; 
 var invaderCardBuild; 
 var invaderCardExplore;
-var invaderCards;
+var invaderCards = [[],[],[],[]]; // Store invader codes
 
 var ravageBadge = null;
 var buildBadge = null;
@@ -82,7 +82,6 @@ $(function() {
     invaderCardBuild = $('#invader-card-build');
     invaderCardRavage = $('#invader-card-ravage');
     invaderCardFourth = $('#invader-card-fourth');
-    invaderCards = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
 
     phaseList = $('#phase-list');
     fearProgressBar = $('#fear-progress');
