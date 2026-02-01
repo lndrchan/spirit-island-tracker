@@ -671,7 +671,6 @@ function undo() {
 function updateUI() {
     updateTerrorLevel();
     updateFearBadge();
-    advancePhaseList();
     updateInvaderCard();
 
     fearProgressBar.attr('style', 'width: ' + fear / maxFear * 100 + '%');
