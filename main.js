@@ -174,6 +174,7 @@ function nextStep() {
     }
 
     if (phase === 4) {
+        $('.fear-btn').attr('disabled','');
         if (earnedFearCards === 0) {
             cardDisplay.html(`
                 <div class="preview-placeholder cantora-one">
@@ -190,6 +191,7 @@ function nextStep() {
 
     // Invader phase: flip explore card
     if (phase === 5) {
+        $('.fear-btn').removeAttr('disabled');
         updateInvaderCard(true);
         updateInvaderBadge(true);
         showAdversaryCard();
