@@ -696,6 +696,8 @@ function updateUI() {
     } else {
         $('#redraw-btn').attr('disabled','');
     }
+
+    
 }
 
 function startNewGame() {
