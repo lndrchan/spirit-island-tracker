@@ -186,7 +186,7 @@ function nextStep() {
     // Invader phase: flip explore card
     if (phase === 5) {
         $('.fear-btn').removeAttr('disabled');
-        advanceInvaderCard(true);
+        showExploreCard();
         updateInvaderBadge(true);
         showAdversaryCard();
     }
@@ -195,7 +195,7 @@ function nextStep() {
     if (phase === 6) {
         clearInvaderCard();
         turn++;
-        advanceInvaderCard(false);
+        advanceInvaderCard();
         turn--;
         if (turn === 0) {
             advancePhaseList(2); // Advance twice to skip to first spirit phase if it is turn 0
