@@ -764,15 +764,11 @@ function updateInvaderCard() {
     let slots = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
     for (let i = 0; i < 4; i++) {
         slots[i].empty();
+        if (!invaderCards[i]) continue;
         for (let j = 0; j < invaderCards[i].length; j++) {
             slots[i].append(generateInvaderCard(invaderCards[i][j]))
         }
     }
-    // To be updated later
-    invaderCardFourth.empty().append(generateInvaderCard(invaderCards[0][0]));
-    invaderCardRavage.empty().append(generateInvaderCard(invaderCards[1][0]));
-    invaderCardBuild.empty().append(generateInvaderCard(invaderCards[2][0]));
-    invaderCardExplore.empty().append(generateInvaderCard(invaderCards[3][0]));
 }
 
 function generateInvaderSeq(levelSeq) {
