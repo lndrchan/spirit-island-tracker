@@ -763,8 +763,9 @@ function generateInvaderCard(code) {
 function updateInvaderCard() {
     let slots = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
     for (let i = 0; i < 4; i++) {
+        slots[i].empty();
         for (let j = 0; j < invaderCards[i].length; j++) {
-
+            slots[i].append(generateInvaderCard(invaderCards[i][j]))
         }
     }
     // To be updated later
