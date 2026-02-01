@@ -284,7 +284,8 @@ function earnFearCard() {
 }
 
 function addFearCard(count) {
-    for (let i = 0; i < count; i++) fear
+    for (let i = 0; i < count; i++) fearLevelSeq[terrorLevel]++;
+    updateUI();
 }
 
 function removeFearCard() {
