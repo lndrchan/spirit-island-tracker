@@ -743,7 +743,7 @@ function advanceInvaderCard() {
     img.classList.add('game-card', 'game-card-invader');
 
     let stage = invaderSeq[turn][0];
-    if (!NaN(stage)) {
+    if (!isNaN(stage)) {
         img.src = `./assets/invader/${stage}.jpg`;
     } else {
         img.src = `./assets/invader/${stage}-back.jpg`;
