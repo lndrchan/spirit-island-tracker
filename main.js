@@ -972,11 +972,11 @@ function generateInvaderSeq(levelSeq) {
 
 function generateSeq(n) {
     let output = Array(n);
-    let orderedArray = Array.from({ length: n }, (_, i) => i);
+    let orderedArray = Array.from({length: n}, (_, i) => i);
 
     for (let i = 0; i < n; i++) {
         let random = Math.floor(Math.random() * (n-i));
-        output[i] = orderedArray[random];
+        output[i] = orderedArray[random]+1;
         orderedArray.splice(random, 1);
     }
     
