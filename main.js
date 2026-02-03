@@ -612,7 +612,7 @@ function generatePhaseListItem(phaseIndex) {
     if (phaseIndex === phase) {
         listItem.addClass('list-group-item-dark')
     }
-    if (phaseIndex === phase - 1) {
+    if (phaseIndex === phase - 1 || (phase === 0 && phaseIndex === phaseCount - 1)) {
         heading.addClass('text-body-tertiary');
         return listItem;
     }
@@ -681,6 +681,10 @@ function generatePhaseListItem(phaseIndex) {
         if (turn === 0) {
             heading.addClass('text-body-tertiary');
         }
+    }
+
+    if (phaseIndex === phase) {
+        heading.after('<span style="float: right;" class="badge rounded-pill bg-primary" id="current-badge"> <i>Current</i> </span>')
     }
 
     return listItem;
