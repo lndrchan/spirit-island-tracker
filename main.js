@@ -61,7 +61,6 @@ var buildBadge = null;
 var exploreBadge = null;
 
 var invaderLevelSeq = [];
-var invaderLevelSeqNumeric = []; // [1,1,1,2,2,2,2,3,3,3,3,3]
 var invaderSeq = []; // [1s, 1w, 2c ... ]
 var invaderSeqIndex = 0;
 var invaderLevelSeqCustom = [];
@@ -86,6 +85,13 @@ var saveIndex = 0;
 
 var cardHistoryEventIndex;
 var cardHistoryFearIndex;
+var lastEventBtn;
+var nextEventBtn;
+var lastFearBtn;
+var nextFearBtn;
+
+var cardDisplayType = ''; // 'fear', 'event', 'blight', 'adversary', ''
+var cardDisplayContent = ''; // id of card being displayed
 
 
 // Special action-specific variables
@@ -99,6 +105,11 @@ $(function() {
     invaderCardBuild = $('#invader-card-build');
     invaderCardRavage = $('#invader-card-ravage');
     invaderCardFourth = $('#invader-card-fourth');
+
+    lastEventBtn = $('#last-event-card-btn');
+    nextEventBtn = $('#next-event-card-btn');
+    lastFearBtn = $('#last-fear-card-btn');
+    nextFearBtn = $('#next-fear-card-btn');
 
     phaseList = $('#phase-list');
     fearProgressBar = $('#fear-progress');
@@ -209,6 +220,12 @@ function nextStep() {
         advancePhaseList(3); // Advance twice to skip to first spirit phase if it is turn 0
         advanceInvaderCard();
         turn++;
+        save();
+        return;
+    }
+
+    if (phase === 3 && eventEnabled && eventSeq[eventSeqIndex-1] == 1) {
+        slaveRebellion();
         return;
     }
 
@@ -217,17 +234,18 @@ function nextStep() {
     if (phase === 4 && earnedFearCards > 0) {
         drawCard('fear');
         earnedFearCards--;
+        updateUI();
+        save();
         return;
     }
 
     advancePhaseList(1);
-    updateUI();
 
     if (phase === 0) {
         turn++;
         turnRandomNumber = Math.random();
         $('#turn-count-display').html(turn);
-        $('#total-turn-count-display').html(invaderLevelSeq.length);
+        $('#total-turn-count-display').html(invaderSeq.length);
     }
 
     if (phase === 2) {
@@ -252,18 +270,18 @@ function nextStep() {
         if (eventEnabled) {
             drawCard('event');
         } else {
-            cardDisplay.html(`
+            displayCard('', `
                 <div class="preview-placeholder cantora-one">
                     <i class="text-muted">Event Cards Disabled</i>
                 </div>
-            `);
+            `)
         }   
     }
 
     if (phase === 4) {
         clearCardDisplay();
         if (earnedFearCards === 0) {
-            cardDisplay.html(`
+            displayCard('', `
                 <div class="preview-placeholder cantora-one">
                     <i class="text-muted">No cards to resolve</i>
                 </div>
@@ -278,7 +296,7 @@ function nextStep() {
 
     // Invader phase: flip explore card
     if (phase === 5) {    
-        showExploreCard();
+        updateInvaderCard(true);
         updateInvaderBadge(true);
         clearCardDisplay();
         showAdversaryCard();
@@ -292,6 +310,8 @@ function nextStep() {
     if (phase === 7) {
         
     }
+
+    updateUI();
 
     save();
 }
@@ -366,14 +386,14 @@ function earnFearCard() {
             alert('Russia effect triggered: Entrench in the Face of Fear');
             let unusedLevel2 = level2.filter(function(item) {return !invaderSeq.includes(item)});
             invaderCards[2].push(unusedLevel2[Math.floor(Math.random() * unusedLevel2.length)]);
-            updateInvaderCard();
+            updateInvaderCard(false);
             updateInvaderBadge();
         }
         if (russiaFearCount === 7) {
             alert('Russia effect triggered: Entrench in the Face of Fear');
             let unusedLevel3 = level3.filter(function(item) {return !invaderSeq.includes(item)});
             invaderCards[2].push(unusedLevel3[Math.floor(Math.random() * unusedLevel3.length)]);
-            updateInvaderCard();
+            updateInvaderCard(false);
             updateInvaderBadge();
         }
     }
@@ -439,7 +459,7 @@ function drawCard(type) {
                 if (invaderLevelSeq[invaderSeqIndex] < 3) {
                     alert(`Slave Rebellion has been drawn. Since the invader level is ${invaderLevelSeq[invaderSeqIndex]}, 'Small Uprising' will be triggered. `);
                 } else {
-                    alert(`Slave Rebellion has been drawn again. Since the invader level is ${invaderLevelSeq[invaderSeqIndex]}, 'Large Revolt' will be triggered. `);
+                    alert(`Slave Rebellion has been drawn again. Since the invader level is ${invaderLevelSeq[invaderSeqIndex]}, 'Rebellion' will be triggered. `);
                 }
             }
             eventSeqIndex++;
@@ -451,7 +471,11 @@ function drawCard(type) {
     }
 }
 
-function displayCard(type, id) {
+function displayCard(type, content) {
+
+    cardDisplayType = type;
+    cardDisplayContent = content;
+
     const $cardDisplay = $('#main-card-display');
     
     // Fade out container
@@ -459,9 +483,14 @@ function displayCard(type, id) {
         // Clear and add new image
         $cardDisplay.empty();
         
+        if (type === '') {
+            $cardDisplay.html(content);
+            $cardDisplay.fadeIn(300);
+            return;
+        }
         const $img = $('<img>')
             .addClass('game-card')
-            .attr('src', `./assets/${type}/${id}.jpg`);
+            .attr('src', `./assets/${type}/${content}.jpg`);
         
         if (type === 'adversary') {
             $img.addClass('game-card-h');
@@ -733,7 +762,6 @@ function setup() {
     }
     
     generateInvaderSeq(invaderLevelSeq);
-    invaderLevelSeqNumeric = invaderLevelSeq.map(code => isNaN(parseInt(code)) ? code : parseInt(code)); // Convert to numeric levels only
     invaderCards = [[],[],[],[invaderSeq[0]]];
 
     // Start at Turn 0 Invader phase
@@ -743,6 +771,7 @@ function setup() {
     showAdversaryCard();
     updatePhaseList();
     updateUI();
+    updateInvaderCard(true);
 
     save();
 }
@@ -772,7 +801,8 @@ function save() {
         earnedFearCards: earnedFearCards,
         fearLevelSeq: fearLevelSeq,
         terrorLevel: terrorLevel,
-        cardDisplayHTML: cardDisplay.html(),
+        cardDisplayContentType: cardDisplayType,
+        cardDisplayContent: cardDisplayContent,
         invaderCards: invaderCards,
         cardHistoryEventIndex: cardHistoryEventIndex,
         cardHistoryFearIndex: cardHistoryFearIndex,
@@ -818,18 +848,20 @@ function load(index) {
     fearLevelSeq = gameData.fearLevelSeq;
     terrorLevel = gameData.terrorLevel;
 
-    cardDisplay.html(gameData.cardDisplayHTML);
-
     invaderCards = gameData.invaderCards;
 
     cardHistoryEventIndex = gameData.cardHistoryEventIndex;
     cardHistoryFearIndex = gameData.cardHistoryFearIndex;
+    cardDisplayType = gameData.cardDisplayContentType;
+    cardDisplayContent = gameData.cardDisplayContent;
 
     fracturedDaysPeekedType = gameData.fracturedDaysPeekedType;
 
     initUI();
     updatePhaseList();
+    displayCard(gameData.cardDisplayContentType, gameData.cardDisplayContent);
     updateUI();
+    if (phase === 5) { updateInvaderCard(true); } else { updateInvaderCard(false); }
     setupModal.modal('hide');
     setupModal.css('display','none');
 
@@ -845,7 +877,6 @@ function undo() {
 function updateUI() {
     updateTerrorLevel();
     updateFearBadge();
-    updateInvaderCard();
     updateInvaderBadge();
 
     fearProgressBar.attr('style', 'width: ' + fear / maxFear * 100 + '%');
@@ -854,20 +885,37 @@ function updateUI() {
     // If in invader phase, show explore. 
     if (phase === 5) {updateInvaderBadge(true)} else {updateInvaderBadge(false)}
     
+    invaderLevelSeq = invaderSeq.map(code => codeToLevel(code));  
+
     $('#turn-count-display').html(invaderSeqIndex);
     $('#invader-level-sequence').html(invaderLevelSeq.slice(invaderSeqIndex).join(' '));
 
-    if (adversary === 'england' && adversaryLevel >= 3 && adversaryLevel < 5) {
-        let invaderSeqIndexGreaterThanLevel1 = 0;
-        for (let i = 0; i < invaderLevelSeq.length; i++) {
-            if (invaderLevelSeq[invaderSeqIndexGreaterThanLevel1] > 1) break;
-            invaderSeqIndexGreaterThanLevel1 ++;
+    // MUST RUN THIS AFTER UPDATING INVADER LEVEL SEQUENCE UI
+    for (let i = 0; i < 4; i++) {
+        if (codeToLevel(invaderLevelSeq[i]) >= 3) invaderLevelSeq[i] = 2; // Prussia: early stage 3 treated as stage 2
+    }
+
+    if (adversary === 'england') {
+        // Remove high immigration tile if level is 3
+        if (adversaryLevel === 3) {
+            let invaderSeqIndexGreaterThanLevel1 = 0;
+            for (let i = 0; i < invaderLevelSeq.length; i++) {
+                if (invaderLevelSeq[invaderSeqIndexGreaterThanLevel1] > 1) break;
+                invaderSeqIndexGreaterThanLevel1 ++;
+            }
+            if (invaderSeqIndex < invaderSeqIndexGreaterThanLevel1 + 3) {
+                if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','block'); 
+                $('#invader-card-label-fourth').html('Build 🏴󠁧󠁢󠁥󠁮󠁧󠁿')
+            } else {
+                if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','none'); 
+                $('#invader-card-label-fourth').html('Discard')
+            }
         }
-        if (invaderSeqIndex < invaderSeqIndexGreaterThanLevel1 + 3) {
+        else if (adversaryLevel >= 4) {
+            if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','block'); 
             $('#invader-card-label-fourth').html('Build 🏴󠁧󠁢󠁥󠁮󠁧󠁿')
-        } else {
-            $('#invader-card-label-fourth').html('Discard')
         }
+        
     }
     
     let redrawEnabledPhases = [3,4];
@@ -884,25 +932,47 @@ function updateUI() {
         $('.fear-btn').removeAttr('disabled');
     }
 
-    if (saveIndex <= 1) {
+    if (saveIndex == 0) {
         $('#btn-undo').attr('disabled','');
     } else {
         $('#btn-undo').removeAttr('disabled');
     }
 
-    $('#last-event-card-btn').attr('disabled','');
-    $('#next-event-card-btn').attr('disabled','');
-    $('#last-fear-card-btn').attr('disabled','');
-    $('#next-fear-card-btn').attr('disabled','');
-    if (eventSeqIndex > 0 && eventEnabled) {
+    if (cardHistoryEventIndex > 0 && eventEnabled) {
         $('#this-event-card-btn').removeAttr('disabled');
     } else {
         $('#this-event-card-btn').attr('disabled','');
     }
-    if (fearSeqIndex > 0) {
+    if (cardHistoryFearIndex > 0) {
         $('#this-fear-card-btn').removeAttr('disabled');  
     } else {
         $('#this-fear-card-btn').attr('disabled','');
+    }
+
+    if (cardHistoryEventIndex < eventSeqIndex-1) {
+        nextEventBtn.removeAttr('disabled');
+    } else {
+        cardHistoryEventIndex = eventSeqIndex-1;
+        nextEventBtn.attr('disabled','');
+    }
+    if (cardHistoryEventIndex > 0) {
+        lastEventBtn.removeAttr('disabled')
+    } else {
+        cardHistoryEventIndex = 0;
+        lastEventBtn.attr('disabled','')
+    }
+
+    if (cardHistoryFearIndex < fearSeqIndex-1) {
+        nextFearBtn.removeAttr('disabled');
+    } else {
+        cardHistoryFearIndex = fearSeqIndex-1;
+        nextFearBtn.attr('disabled','');
+    }
+    if (cardHistoryFearIndex > 0) {
+        lastFearBtn.removeAttr('disabled')
+    } else {
+        cardHistoryFearIndex = 0;
+        lastFearBtn.attr('disabled','')
     }
         
 
@@ -915,7 +985,7 @@ function initUI() {
         $('#blight-btn').css('display','none');
     }
 
-    $('#total-turn-count-display').html(invaderLevelSeq.length);
+    $('#total-turn-count-display').html(invaderSeq.length);
     let invaderCardLabels = [
         $('#invader-card-label-fourth'), 
         $('#invader-card-label-ravage'), 
@@ -932,7 +1002,7 @@ function initUI() {
 
         let actionChangeIndex = adversaryConfig[adversary]['actionChange'][adversaryLevel];
         for (let i = 0; i < actionChangeIndex.length; i++) {
-            invaderCardLabels[actionChangeIndex[i]].append(adversaryFlagDict[adversary]);
+            invaderCardLabels[actionChangeIndex[i]].append(' ' +adversaryFlagDict[adversary]);
         }
     } else {
         // No adversary, hide button
@@ -962,13 +1032,6 @@ function showBlightCard() {
     displayCard('blight', blightSeq[blightSeqIndex]);
 }
 
-function showExploreCard() {
-    invaderCards[3] = [];
-    nextCard = invaderSeq[invaderSeqIndex];
-    invaderCards[3].push(nextCard);
-    updateInvaderCard();
-}
-
 function advanceInvaderCard() {
     for (let i = 0; i < 3; i++) {
         let newArray = [];
@@ -984,26 +1047,16 @@ function advanceInvaderCard() {
         invaderCards[i] = newArray;
     }
 
-    invaderCards[3] = [];
-    nextCard = invaderSeq[invaderSeqIndex+1];
-    if (nextCard) {
-        if (!isNaN(nextCard[0])) {
-            invaderCards[3].push(nextCard[0]);
-        } else {
-            invaderCards[3].push(nextCard);
-        }
-    }
-    
     invaderSeqIndex++;
-    if (invaderSeqIndex === invaderLevelSeq.length) {
+    if (invaderSeqIndex === invaderSeq.length) {
         alert('This is the last turn before time runs out...')
     }
-    if (invaderSeqIndex > invaderLevelSeq.length) {
+    if (invaderSeqIndex > invaderSeq.length) {
         alert('You have reached the end of the Invader Deck. The Invaders have taken over the Island...')
         return;
     }
 
-    updateInvaderCard();
+    updateInvaderCard(false);
 }
 
 function generateInvaderCard(code) {
@@ -1012,11 +1065,27 @@ function generateInvaderCard(code) {
     return img;
 }
 
-function updateInvaderCard() {
+function updateInvaderCard(showExploreCard) {
     let slots = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
+
+    nextCard = invaderSeq[invaderSeqIndex];
+    
+    invaderCards[3] = [];
+    if (nextCard) {
+        if (!isNaN(nextCard[0])) {
+            if (showExploreCard) {
+                invaderCards[3].push(nextCard);
+            } else {
+                invaderCards[3].push(codeToLevel(nextCard));
+            }
+        } else {
+            invaderCards[3].push(nextCard);
+        }
+    }
+
     for (let i = 0; i < 4; i++) {
         slots[i].empty();
-        if (!invaderCards[i]) continue;
+        if (!invaderCards[i]) continue; // Skip slot if no cards in invaderCards[i]
         for (let j = 0; j < invaderCards[i].length; j++) {
             slots[i].append(generateInvaderCard(invaderCards[i][j]))
         }
@@ -1112,7 +1181,10 @@ function generateBadge(terrain) {
             b.css('color','#767167');
             b.html('Salt');
             break;
-        case 'u': 
+        case 'n': 
+            b.html('None');
+            break;
+        default: 
             b.css('background-color', '#ffffff');
             b.css('color','#000000');
             b.css('border-color', '#000');
@@ -1120,11 +1192,8 @@ function generateBadge(terrain) {
             b.css('border-width', '1px');
             b.html('Unknown');
             break;
-        case 'n': 
-            b.html('None');
-            break;
     }
-
+    
     return b;
 }
 
@@ -1213,40 +1282,20 @@ function displayCardHistory(type,step) {
             return;
         }
     }
+
     switch (type){
         case 'event': 
             cardHistoryEventIndex += step;
-            if (cardHistoryEventIndex < eventSeqIndex-1) {
-                nextEventBtn.removeAttr('disabled');
-            } else {
-                cardHistoryEventIndex = eventSeqIndex-1;
-                nextEventBtn.attr('disabled','');
-            }
-            if (cardHistoryEventIndex > 0) {
-                lastEventBtn.removeAttr('disabled')
-            } else {
-                cardHistoryEventIndex = 0;
-                lastEventBtn.attr('disabled','')
-            }
             displayCard('event', eventSeq[cardHistoryEventIndex]);
             break;
         case 'fear': 
             cardHistoryFearIndex += step;
-            if (cardHistoryFearIndex < fearSeqIndex-1) {
-                nextFearBtn.removeAttr('disabled');
-            } else {
-                cardHistoryFearIndex = fearSeqIndex-1;
-                nextFearBtn.attr('disabled','');
-            }
-            if (cardHistoryFearIndex > 0) {
-                lastFearBtn.removeAttr('disabled')
-            } else {
-                cardHistoryFearIndex = 0;
-                lastFearBtn.attr('disabled','')
-            }
             displayCard('fear', fearSeq[cardHistoryFearIndex]);
             break;
     }
+
+    updateUI();
+    save();
 }
 
 function validateSetupForm() {
@@ -1295,20 +1344,20 @@ function processCustomSequences() {
     ];
     
     for (let level of levels) {
-        if (level && (isNaN(parseInt(level)) || parseInt(level) < 1)) {
+        if (isNaN(parseInt(level)) || parseInt(level) < 1) {
             alert('Fear card counts must be positive numbers');
             return false;
         }
-        
     }
     fearLevelSeqCustom = levels;
     return true;
 }
 
-function slaveRebellion(type) {
-    // 0: return card to under top 3 cards of event deck; draw new event card
-    // 1: discard slave rebellion card; draw new event card
-    if (type === 0) {
+function slaveRebellion() {
+    
+    if (invaderLevelSeq[invaderSeqIndex] < 3) {
+        // Return card to under top 3 cards of event deck; draw new event card
+
         if (eventSeqIndex > eventSeq.length - 4) {
             // Regenerate event card sequence if left over deck not big enough
             // Highly unlikely to happen but not impossible
@@ -1321,14 +1370,56 @@ function slaveRebellion(type) {
         
         alert(`A new Event Card is now drawn and displayed. Slave Rebellion has been returned to the Event Deck under the top 3 cards. `)
     }
-    else if (type === 1) {
+    else {
+        // Discard slave rebellion card; draw new event card
         drawCard('event');
         alert(`A new Event Card is now drawn and displayed. Slave Rebellion has been discarded. `)
     }
+    save();
 }
 
 function spiritsMayYetDream() {
+    if (!(phase === 1 || phase === 6)) {
+        alert('You can only use this power during the Fast Power or Slow Power phase. ');
+        return;
+    }
 
+    if (earnedFearCards === 0) {
+        alert('No earned Fear Cards to draw.');
+        return;
+    }
+
+    // Flip all earned fear cards
+    for (let i = 0; i < earnedFearCards; i++) {
+        drawCard('fear');
+    }
+
+    displayCardHistory('fear', 0);
+    for (let i = 0; i < earnedFearCards-1; i++) {
+        displayCardHistory('fear', -1);
+    }
+
+    cardHistoryFearIndex = fearSeqIndex - earnedFearCards;
+
+    alert(`All earned Fear Cards have been drawn. The earliest drawn Fear Card is now displayed. Switch between drawn Fear Cards using the Card History buttons. `)
+    earnedFearCards = 0;
+
+    updateUI();
+    save();
+}
+
+function terrorSpikesUpwards() {
+    // Resolve first earned fear card now
+
+    if (earnedFearCards === 0) {
+        alert('No earned Fear Cards to draw.');
+        return;
+    }
+
+    drawCard('fear');
+    earnedFearCards--;
+    updateUI();
+    save();
 }
 
 function fracturedDaysPower(deck, strength) { 
@@ -1420,4 +1511,9 @@ function isValidCode(code) {
         if (!isNaN(code[0]) && !level1.includes(code) && !level2.includes(code) && !level3.includes(code)) return false;
     }
     return true;
+}
+
+function codeToLevel(code) {
+    if (isNaN(code[0])) return code;
+    return parseInt(code[0]);
 }

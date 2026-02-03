@@ -212,7 +212,7 @@
 										</div>
 										
 										<!-- Custom Sequences Section (Initially Hidden) -->
-										<div id="customSequencesSection" style="display: none;">
+										<div id="customSequencesSection" class="container-glassmorphism" style="display: none;">
 											<!-- Custom Invader Sequence -->
 											<div class="form-group mt-3">
 												<label for="customInvaderSequence" class="form-label">Custom Invader Card Sequence</label>
@@ -221,7 +221,8 @@
 													id="customInvaderSequence" 
 													placeholder="Leave blank for default ">
 												<small class="form-text text-muted">
-													Enter space- or comma-separated numbers. 1 = Stage I, 2 = Stage II, 3 = Stage III (e.g., 1,1,1,2,2,2,2,3,3,3,3,3) <br>
+													Enter space- or comma-separated numbers. <br>
+													1 = Stage I, 2 = Stage II, 3 = Stage III (e.g., 1 1 1 2 2c 2 2 3 3 3 3 3) <br>
 													To specify a card, use 'number+letter' format (e.g., 2c = Stage II Coast card)
 												</small>
 											</div>
@@ -509,13 +510,24 @@
 						<div class="special-action-section">
 							<h5>Events</h5>
 							
-							<div class="row">
+							<div class="row special-action-row">
 								<div class="col-md-6 special-action-label">
 									Far-Off Wars Touch the Island
 								</div>
 								<div class="col-md-6">
 									<button type="button" class="btn btn-secondary special-action-btn" onclick="addFearCard(1)">
 										Add Fear Card to Top of Fear Deck
+									</button>	
+								</div>
+							</div>
+
+							<div class="row special-action-row">
+								<div class="col-md-6 special-action-label">
+									Terror Spikes Upwards
+								</div>
+								<div class="col-md-6">
+									<button type="button" class="btn btn-secondary special-action-btn" onclick="terrorSpikesUpwards()">
+										Resolve First Earned Fear Card Now
 									</button>	
 								</div>
 							</div>
