@@ -492,7 +492,8 @@ function displayCard(type, content) {
         }
         const $img = $('<img>')
             .addClass('game-card')
-            .attr('src', `./assets/${type}/${content}.jpg`);
+            .attr('src', `./assets/${type}/${content}.jpg`)
+            .attr('data-action', 'zoom');
         
         if (type === 'adversary') {
             $img.addClass('game-card-h');
