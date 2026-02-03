@@ -2,18 +2,16 @@
 
 **Access the tool at [https://lndrchan.github.io/spirit-island-tracker/](https://lndrchan.github.io/spirit-island-tracker/)**
 
-Welcome to Spirit Island Tracker. This is a web app created to replace the invader board for Spirit Island, to reduce the amount of setup needed when playing the board game. 
+Welcome to Spirit Island Tracker. This is a web app that simulates an automated Invader Board for the board game Spirit Island, to reduce the amount of setup needed when playing. 
 
-This is a personal project and is only meant to complement the board game rather than replacing it altogether. 
-
-I will try my best to respond to any feedback and suggestions. However, since I am new to web programming, I may not be able to implement all of the requests. 
+This is a personal project and is only meant to complement the board game rather than replacing it altogether. I will try my best to respond to any feedback and suggestions. However, since I am new to web programming, I may not be able to implement all of the requests. 
 
 # How to Use
 
-- Set up the board game with the following components as usual: 
-    - Spirit Boards, Cards and Tokens (Energy, Power Decks and any associated pieces)
+- You only need to set up the board game with the following components as usual: 
+    - Spirit components: Boards, Power Cards and Tokens (Energy, and any associated pieces if applicable)
     - Island Boards and Tokens (Invader pieces)
-    - **Skip drawing the Blight Card but keep the reserve of Blight Tokens as if they were placed on the Card**. This tool will track the Blight Card drawn throughout the game. 
+    - **Skip drawing the Blight Card but keep the Blight Pool as if they were placed on the Card**. This tool will track the Blight Card drawn throughout the game while you will need physical Blight tokens to add onto the board. 
 - You do **not** need to set up the following: 
     - Fear Deck and Terror Level indicator
     - Event Deck
@@ -25,11 +23,17 @@ I will try my best to respond to any feedback and suggestions. However, since I 
 
 # Compatibility
 
-- This tool supports all adversaries and their special rules. However, Supporting Adversaries (combinations) are **not** supported. 
+- This tool explicitly supports the following Event Cards:
+    - Far-Off Wars Touch the Island
+    - Terror Spikes Upwards
+    - I may have missed some Event Cards that are resolved by changing the Invader Board. In those cases, use the 'Redraw' button and consider letting me know via the 'Credits & Feedback' menu. 
+- This tool supports all adversaries and their special rules.
+    - Namely, England High Immigration Tile, France 'Slave Rebellion' Event, Russia 'Entrench in the Face of Fear' Effect
+    - However, Supporting Adversaries (combinations) are **not** supported. 
 - All Spirits are supported. However, some of them need **Special Actions** with this tool to resolve their effects: 
     - Bringer of Dreams and Nightmares: **Spirits May Yet Dream**
     - Fractured Days Split the Sky: **Visions of a Shifting Future**
-- Use scenarios at your own discretion. Any scenarios that change the Invader Board setup are generally not supported.
+- Use Scenarios at your own discretion. Support for specific Scenarios will be considered, but not guaranteed.
 - Vertical screens and small screens are **not** supported. Please use a sufficiently sized horizontal screen (laptops, tablets etc.) and adjust text size as needed. 
 ---
 **If you would like to see a feature added or report a broken feature, please consider sending feedback with the 'Issues' tab on Github or 'Bug Reports and Feature Suggestions' button under the 'Credits and Feedback' menu.**
@@ -51,6 +55,6 @@ Created by lndrchan (Leander). Please consider [buying me a coffee](https://ko-f
 
 ---
 
-Spirit Island is a board game by R. Eric Reuss, published by Greater Than Games. 
+Spirit Island is a board game by R. Eric Reuss, published by Greater Than Games, LLC. 
 
 Spirit Island Tracker is an unofficial tool and is not affiliated with Spirit Island's publisher or author in any way. 
