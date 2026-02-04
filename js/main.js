@@ -763,7 +763,7 @@ function setup() {
     // Sweden 4: discard top card of lowest invader stage remaining
     if (adversary === 'sweden' && adversaryLevel >= 4) {
         for (let i = 0; i < invaderSeq.length; i++) {
-            if (invaderSeq[i][1] === Math.min(levelSeq)) {
+            if (codeToLevel(invaderSeq[i]) === Math.min(invaderLevelSeq)) {
                 invaderSeq.splice(i, 1);
                 return;
             }
@@ -798,6 +798,11 @@ function setup() {
                 eventSeq.splice(i, 1);
             }
         }
+    }
+
+    // Habsburg Mining Expedition: Preprocess level 2 pool to remove coast card
+    if (adversary === 'habsburg-mining' && adversaryLevel >= 4) {
+        level2 = level2.filter((item) => item !== '2c'); // Remove '2c'
     }
     
     generateInvaderSeq(invaderLevelSeq);
@@ -1537,11 +1542,11 @@ function fracturedDaysPower(deck, strength) {
 
 
 function isValidCode(code) {
-    if (code.length > 2) return false;
+    if (code.length > 3) return false;
     if (code.length === 1) {
         if (isNaN(parseInt(code))) return false;
     }
-    if (code.length === 2) {
+    if (code.length === 2 || code.length === 3) {
         if (!isNaN(code[0]) && !level1.includes(code) && !level2.includes(code) && !level3.includes(code)) return false;
     }
     return true;
