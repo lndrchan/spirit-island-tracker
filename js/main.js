@@ -760,16 +760,6 @@ function setup() {
         fearLevelSeq = fearLevelSeqCustom;
     }
 
-    // Sweden 4: discard top card of lowest invader stage remaining
-    if (adversary === 'sweden' && adversaryLevel >= 4) {
-        for (let i = 0; i < invaderSeq.length; i++) {
-            if (codeToLevel(invaderSeq[i]) === Math.min(invaderLevelSeq)) {
-                invaderSeq.splice(i, 1);
-                return;
-            }
-        }
-    }
-
     fear = 0;
 
     // Fall back to lower level if undefined (same as level below)
@@ -805,7 +795,16 @@ function setup() {
         level2 = level2.filter((item) => item !== '2c'); // Remove '2c'
     }
     
-    generateInvaderSeq(invaderLevelSeq);
+    invaderSeq = generateInvaderSeq(invaderLevelSeq);
+    // Sweden 4: discard top card of lowest invader stage remaining
+    if (adversary === 'sweden' && adversaryLevel >= 4) {
+        for (let i = 0; i < invaderSeq.length; i++) {
+            if (codeToLevel(invaderSeq[i]) === Math.min(...invaderLevelSeq)) {
+                invaderSeq.splice(i, 1);
+                break;
+            }
+        }
+    }
     invaderCards = [[],[],[],[invaderSeq[0]]];
 
     // Start at Turn 0 Invader phase
@@ -1140,14 +1139,14 @@ function generateInvaderSeq(levelSeq) {
 
     // levelSeq: defined in adversary-config under each 'invader' section
 
-    invaderSeq = Array(levelSeq.length);
+    output = Array(levelSeq.length);
     let index = 0;
 
     for (let i = 0; i < levelSeq.length; i++) {
         if (isNaN(levelSeq[i])) {
             // If not a number, it is a specified invader card code. 
             // Prioritise its position in invader card sequence.
-            invaderSeq[i] = levelSeq[i];
+            output[i] = levelSeq[i];
         }
     }
 
@@ -1156,21 +1155,22 @@ function generateInvaderSeq(levelSeq) {
         if (invaderSeq[i] !== undefined) continue; // Pre-filled slot
         if (level == 1) {
             index = Math.floor(Math.random() * level1.length);
-            invaderSeq[i] = (level1[index]);
+            output[i] = (level1[index]);
             level1.splice(index, 1);
         } 
         else if (level == 2) {
             index = Math.floor(Math.random() * level2.length);
-            invaderSeq[i] = (level2[index]);
+            output[i] = (level2[index]);
             level2.splice(index, 1);
         }
         else if (level == 3) {
             index = Math.floor(Math.random() * level3.length);
-            invaderSeq[i] = (level3[index]);
+            output[i] = (level3[index]);
             level3.splice(index, 1);
         }
     }
 
+    return output;
 }
 
 function generateSeq(n) {
