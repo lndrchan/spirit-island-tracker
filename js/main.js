@@ -362,7 +362,7 @@ function removeFear(count) {
                 fear = 0;
                 return;
             } 
-            removeFearCard();
+            unearnFearCard();
             fear = maxFear - 1;
         }
     }
@@ -427,14 +427,12 @@ function addFearCard(count) {
     updateUI();
 }
 
-function removeFearCard() {
+function unearnFearCard() {
     earnedFearCards--;
     fearLevelSeq[terrorLevel]++;
     if (fearLevelSeq[terrorLevel] === adversaryConfig[adversary]['fear'][adversaryLevel]) {
         terrorLevel--;
-        updateTerrorLevel();
     }
-    updateFearBadge();
 }
 
 function updateFearBadge() {
@@ -555,6 +553,23 @@ function redraw() {
         fearSeq[fearSeqIndex-1] = fearSeq.pop();
         displayCard('fear', fearSeq[fearSeqIndex-1]);
     }
+}
+
+function removeCard(type, count) {
+    if (type === 'fear') {
+        for (let i = 0; i < count; i++) {
+            fearLevelSeq[terrorLevel]--;
+        }
+    }
+    else if (type === 'invader') {
+        for (let i = 0; i < count; i++) {
+            invaderSeqIndex++;
+            updateInvaderCard(false);
+        } 
+    }
+    
+    updateUI();
+    save();
 }
 
 // Remove first item of phase list and generate new phase list item at bottom of list
