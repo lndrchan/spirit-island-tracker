@@ -24,7 +24,7 @@ This is a personal project and is only meant to complement the board game rather
 # Compatibility
 
 - I may have missed some Event Cards that are resolved by changing the Invader Board. In those cases, use the 'Redraw' button and consider letting me know via the 'Credits & Feedback' menu. 
-- This tool supports the following Adversary special rules (apart from changed Invader Deck and Fear Deck sequences):  
+- This tool supports the following Adversary special rules (in addition to changed Invader Deck and Fear Deck sequences):  
     - England High Immigration Tile
     - France 'Slave Rebellion' Event
     - Russia 'Entrench in the Face of Fear' Effect
