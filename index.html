@@ -276,19 +276,62 @@
 			<div class="row main-container">
 				<div class="col-md-3">
 					<div class="left-bar fear-panel-top">
-						<p id="fear-cards-remaining-container">Fear Cards Remaining 
-							<span class="badge text-bg-dark fear-cards-remaining-badge">1</span> /
-							<span class="badge text-bg-dark fear-cards-remaining-badge">4</span> /
-							<span class="badge text-bg-dark fear-cards-remaining-badge">4</span>
-						</p>
-
-						<span class="badge text-bg-dark fear-panel-top-title" id="fear-cards-next-level">1</span>
-						cards until next Terror Level
-
-						<hr>
-
-						<p>Earned this turn: <span class="badge text-bg-dark fear-badge" id="left-bar-fear-badge">2</span></p>
-
+						<div class="row container-glassmorphism" id="fear-card-number-display">
+							<div class="col-md-4 text-center">
+								<h5 class="fear-card-number-title">Earned</h5> 
+								<div class="fs-4">
+									<div class="col fear-badge-container">
+										<span class="badge text-bg-dark" id="left-bar-fear-badge">1</span>
+										<div class="fear-card-control">
+											<button type="button" class="btn btn-secondary fear-card-btn">
+												Reveal
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-8 text-center">
+								<h5 class="fear-card-number-title">Fear Cards Remaining</h5>
+								<div class="fs-4" id="fear-cards-remaining-container">
+									<div class="fear-badge-container">
+										<span class="badge text-bg-dark fear-cards-remaining-badge">1</span>
+										<div class="fear-card-control">
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="addFearCard(0)">
+												+
+											</button>
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="removeFearCard(0)">
+												-
+											</button>
+										</div>
+									</div>
+									<div class="fear-badge-slash">/</div>
+									<div class="fear-badge-container">
+										<span class="badge text-bg-dark fear-cards-remaining-badge">1</span>
+										<div class="fear-card-control">
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="addFearCard(1)">
+												+
+											</button>
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="removeFearCard(1)">
+												-
+											</button>
+										</div>
+									</div>
+									<div class="fear-badge-slash">/</div>
+									<div class="fear-badge-container">
+										<span class="badge text-bg-dark fear-cards-remaining-badge">1</span>
+										<div class="fear-card-control">
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="addFearCard(2)">
+												+
+											</button>
+											<button type="button" class="btn btn-secondary fear-card-btn" onclick="removeFearCard(2)">
+												-
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div style="text-align: center;height: 0.75em"><i class="bi bi-caret-down-fill text-secondary"></i></div>
+						</div>
 						<hr>
 
 						<div class="card container-glassmorphism fear-panel-bottom" data-bs-theme="dark">
@@ -396,7 +439,7 @@
 										</div>
 									</div>	
 								</div>
-
+								<hr>
 								<div class="card container-glassmorphism fear-panel-bottom" data-bs-theme="dark">
 									<h6 class="card-header">
 										Card Histories

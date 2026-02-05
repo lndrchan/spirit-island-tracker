@@ -221,6 +221,10 @@ $(function() {
         }
     });
 
+    $('#fear-card-number-display').on('click', function() {
+        $('.fear-card-control').slideToggle();
+    });
+
     // Card action button click handler
     $('.btn-card-action').on('click', function() {
 
@@ -372,7 +376,6 @@ function addFear(count) {
 
         if (fear === maxFear) {
             earnFearCard();
-            return;
         }
 
         if (fear >= maxFear || fear < 0) {
@@ -421,12 +424,16 @@ function updateTerrorLevel() {
 function earnFearCard() {
     earnedFearCards++;
     removeCard('fear');
-    
-    updateFearBadge();
 }
 
-function addFearCard(count) {
-    for (let i = 0; i < count; i++) fearLevelSeq[terrorLevel]++;
+function addFearCard(tl) {
+    fearLevelSeq[tl]++;
+    updateUI();
+    save();
+}
+
+function removeFearCard(tl) {
+    fearLevelSeq[tl]--;
     updateUI();
     save();
 }
@@ -602,9 +609,6 @@ function removeCard(type) {
         updateInvaderCard(false);
 
     }
-    
-    updateUI();
-    save();
 }
 
 // Remove first item of phase list and generate new phase list item at bottom of list
