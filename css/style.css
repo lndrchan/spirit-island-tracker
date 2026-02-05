@@ -219,9 +219,9 @@
     margin: 0px 6px;
 }
 
-.fear-btn 
+#btn-add-fear-2
 {
-    width: 49%; 
+    margin-left: 3px !important;
 }
 
 .remove-fear-btn

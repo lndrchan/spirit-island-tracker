@@ -31,6 +31,17 @@ var phaseListDict = {
     7: 'Time Passes'
 };
 
+var phaseListIcon = {
+    0: '<img src="./assets/symbol/token.png" class="inverted">',
+    1: '<img src="./assets/symbol/fast.png" class="brightness">',
+    2: '<img src="./assets/symbol/blight.png" class="inverted">',
+    3: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-fire" viewBox="0 0 16 16"><path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16m0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15"/></svg>',
+    4: '<img src="./assets/symbol/fear.png" class="inverted">',
+    5: '<img src="./assets/symbol/explorer.png" class="inverted">',
+    6: '<img src="./assets/symbol/slow.png" class="brightness">',
+    7: 'Time Passes'
+}
+
 var level1 = ['1w', '1s', '1j', '1m'];
 var level2 = ['2w', '2s', '2j', '2m', '2c'];
 var level3 = ['3js', '3jw', '3mj', '3mw', '3sm', '3sw'];
@@ -440,7 +451,7 @@ function addFearCard(tl) {
     save();
 }
 
-function removeFearCard() {
+function removeFearCard(save) {
     fearLevelSeq[terrorLevel]--;
     if (fearLevelSeq[terrorLevel] === 0) {
         terrorLevel++;
@@ -471,7 +482,7 @@ function removeFearCard() {
     }
     
     updateUI();
-    save();
+    if (save) save();
 }
 
 function unearnFearCard() {
@@ -584,6 +595,8 @@ function displayCard(type, content) {
             });
         });
     });
+
+    updateUI();
 }
 
 function clearCardDisplay() {
@@ -591,7 +604,7 @@ function clearCardDisplay() {
 }
 
 function redraw() {
-    if (phase === 2) {
+    if (phase === 2 || cardDisplayType == 'blight') {
         if (blightSeqIndex >= blightSeq.length-1) blightSeq = generateSeq(BLIGHT_CARD_COUNT);
         blightSeq[blightSeqIndex] = blightSeq.pop();
         displayCard('blight', blightSeq[blightSeqIndex]);
@@ -694,7 +707,11 @@ function generatePhaseListItem(phaseIndex) {
         .addClass('phase-list-title')
         .html(phaseListDict[phaseIndex])
         .appendTo(listItem);
-    let phaseListIconContainer = $('<div></div>').addClass('phase-list-icon-container').prependTo(listItem);
+    $('<div></div>')
+        .addClass('phase-list-icon-container')
+        .prependTo(listItem)
+        .prepend($(phaseListIcon[phaseIndex])
+        .addClass('phase-list-icon'));
 
     if (phaseIndex === phase) {
         listItem.addClass('list-group-item-dark')
@@ -707,9 +724,6 @@ function generatePhaseListItem(phaseIndex) {
     if (phaseIndex === 0) {
         // Spirit phase special texts
 
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/token.png">')
-            .addClass('phase-list-icon inverted'));
-
         $('<ul style="list-style-type:none; padding-left: 40px;margin-top: 0.5em;margin-bottom: 0em;"></ul>')
             .append('<li>Growth options</li>')
             .append('<li>Gain energy</li>')
@@ -717,18 +731,11 @@ function generatePhaseListItem(phaseIndex) {
             .appendTo(listItem);
     }
     else if (phaseIndex === 1) {
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/fast.png">')
-            .addClass('phase-list-icon brightness'));
     }
     else if (phaseIndex === 2) {
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/blight.png">')
-            .addClass('phase-list-icon inverted'));
     }
     else if (phaseIndex === 4) {
         // Fear card phase special texts (fear badge)
-
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/fear.png">')
-            .addClass('phase-list-icon inverted'));
 
         if (earnedFearCards > 0) {
             $('<span></span>')
@@ -742,9 +749,6 @@ function generatePhaseListItem(phaseIndex) {
     else if (phaseIndex === 5) {
         // Invader phase texts
 
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/explorer.png">')
-            .addClass('phase-list-icon inverted'));
-
         listItem.removeClass('d-flex');
         let invaderPhaseDescription = $('<ul style="list-style-type:none; padding-left: 40px;margin-top: 0.5em;margin-bottom: 0em;"></ul>');
         invaderPhaseDescription.append('<li id="phase-list-fourth-item" style="display:none;">Build: <span class="badge" id="phase-list-fourth-badge"> </span> </li>')
@@ -755,9 +759,6 @@ function generatePhaseListItem(phaseIndex) {
         invaderPhaseDescription.appendTo(listItem);
     }
     else if (phaseIndex === 6) {
-
-        phaseListIconContainer.prepend($('<img src="./assets/symbol/slow.png">')
-            .addClass('phase-list-icon brightness'));
 
         // Grey text out if game just started (skipping)
         if (turn === 0) {
@@ -858,6 +859,7 @@ function setup() {
     }
     
     invaderSeq = generateInvaderSeq(invaderLevelSeq);
+
     // Sweden 4: discard top card of lowest invader stage remaining
     if (adversary === 'sweden' && adversaryLevel >= 4) {
         for (let i = 0; i < invaderSeq.length; i++) {
@@ -992,15 +994,17 @@ function updateUI() {
     // If in invader phase, show explore. 
     if (phase === 5) {updateInvaderBadge(true)} else {updateInvaderBadge(false)}
     
-    invaderLevelSeq = invaderSeq.map(code => codeToLevel(code));  
+    // invaderLevelSeq = invaderSeq.map(code => codeToLevel(code));  
 
     $('#turn-count-display').html(invaderSeqIndex);
     $('#invader-level-sequence').html(invaderLevelSeq.slice(invaderSeqIndex).join(' '));
 
     // MUST RUN THIS AFTER UPDATING INVADER LEVEL SEQUENCE UI
+    /*
     for (let i = 0; i < 4; i++) {
         if (codeToLevel(invaderLevelSeq[i]) >= 3) invaderLevelSeq[i] = 2; // Prussia: early stage 3 treated as stage 2
     }
+    */
 
     if (adversary === 'england') {
         // Remove high immigration tile if level is 3
@@ -1039,7 +1043,7 @@ function updateUI() {
     });
     
     let redrawEnabledPhases = [3,4];
-    if (redrawEnabledPhases.includes(phase)) {
+    if (redrawEnabledPhases.includes(phase) || (cardDisplayType == 'blight' && blightFlipped)) {
         $('#redraw-btn').removeAttr('disabled');
     } else {
         $('#redraw-btn').attr('disabled','');
@@ -1228,12 +1232,15 @@ function generateInvaderSeq(levelSeq) {
             // If not a number, it is a specified invader card code. 
             // Prioritise its position in invader card sequence.
             output[i] = levelSeq[i];
+            if (level1.indexOf(levelSeq[i]) > -1) level1.splice(level1.indexOf(levelSeq[i]), 1);
+            if (level2.indexOf(levelSeq[i]) > -1) level2.splice(level2.indexOf(levelSeq[i]), 1);
+            if (level3.indexOf(levelSeq[i]) > -1) level3.splice(level3.indexOf(levelSeq[i]), 1);
         }
     }
 
     for (let i = 0; i < levelSeq.length; i++) {
         level = parseInt(levelSeq[i]);
-        if (invaderSeq[i] !== undefined) continue; // Pre-filled slot
+        if (output[i] !== undefined) continue; // Pre-filled slot
         if (level == 1) {
             index = Math.floor(Math.random() * level1.length);
             output[i] = (level1[index]);
@@ -1379,10 +1386,12 @@ function changeBlightCard() {
     if (!blightFlipped) {
         blightFlipped = true;
         displayCard('blight', blightSeq[blightSeqIndex]);
+        save();
         return;
     }
     blightSeqIndex++;
     displayCard('blight', blightSeq[blightSeqIndex]);
+    save();
 }
 
 function displayCardHistory(type,step) {
