@@ -169,6 +169,11 @@
     text-transform: uppercase;
 }
 
+#btn-next-phase
+{
+    height: 3.3em;
+}
+
 .special-action-row
 {
     margin-bottom: 12px;

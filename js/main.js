@@ -501,6 +501,9 @@ function displayCard(type, content) {
 
     if (content == 'none' || content == '') return;
 
+    cardDisplayType = type;
+    cardDisplayContent = content;
+
     // Fade out container
     cardDisplay.fadeOut(300, function() {
         // Clear and add new image

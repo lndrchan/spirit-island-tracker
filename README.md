@@ -25,6 +25,7 @@ This is a personal project and is only meant to complement the board game rather
 
 - This tool explicitly supports the following Event Cards:
     - Far-Off Wars Touch the Island
+    - Rising Interest in the Island
     - Terror Spikes Upwards
     - I may have missed some Event Cards that are resolved by changing the Invader Board. In those cases, use the 'Redraw' button and consider letting me know via the 'Credits & Feedback' menu. 
 - This tool supports all adversaries and their special rules.
