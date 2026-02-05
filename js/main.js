@@ -163,6 +163,7 @@ $(function() {
                      class="game-card adversary-preview-image">
             `;
             $('#adversaryPreview').html(previewHTML);
+            $('#adversary-intro-container').html(adversaryIntroText[selectedAdversary]);
         } else {
             // Hide adversary level selector
             $('#adversaryLevelGroup').slideUp();
