@@ -487,10 +487,12 @@ function removeFearCard(save) {
 
 function unearnFearCard() {
     earnedFearCards--;
-    fearLevelSeq[terrorLevel]++;
-    if (fearLevelSeq[terrorLevel] === adversaryConfig[adversary]['fear'][adversaryLevel]) {
+    
+    if (fearLevelSeq[terrorLevel] == adversaryConfig[adversary]['fear'][adversaryLevel][terrorLevel]) {
         terrorLevel--;
     }
+
+    fearLevelSeq[terrorLevel]++;
 }
 
 function updateFearBadge() {
