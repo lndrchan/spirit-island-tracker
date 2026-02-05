@@ -956,15 +956,13 @@ function load(index) {
 
     cardHistoryEventIndex = gameData.cardHistoryEventIndex;
     cardHistoryFearIndex = gameData.cardHistoryFearIndex;
-    cardDisplayType = gameData.cardDisplayContentType;
-    cardDisplayContent = gameData.cardDisplayContent;
 
     fracturedDaysPeekedType = gameData.fracturedDaysPeekedType;
 
     initUI();
     updatePhaseList();
-    displayCard(gameData.cardDisplayContentType, gameData.cardDisplayContent);
     updateUI();
+    displayCard(gameData.cardDisplayContentType, gameData.cardDisplayContent);
     if (phase === 5) { updateInvaderCard(true); } else { updateInvaderCard(false); }
     setupModal.modal('hide');
     setupModal.css('display','none');
@@ -1038,7 +1036,7 @@ function updateUI() {
     });
     
     let redrawEnabledPhases = [3,4];
-    if (redrawEnabledPhases.includes(phase) || (cardDisplayType == 'blight' && blightFlipped)) {
+    if (redrawEnabledPhases.includes(phase)) {
         $('#redraw-btn').removeAttr('disabled');
     } else {
         $('#redraw-btn').attr('disabled','');

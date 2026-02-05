@@ -358,10 +358,10 @@
 
 					<div class="left-bar-bottom container-glassmorphism">
 						<button type="button" class="btn btn-outline-light" style="width:100%;" id='redraw-btn' onclick="redraw()">
-							Redraw
+							Redraw Event/Fear Card
 						</button>
 						<button type="button" class="btn btn-outline-light" style="width:100%;" id='blight-btn' onclick="changeBlightCard()">
-							Flip/Change Blight Card
+							Flip/Redraw Blight Card
 						</button>
 						<button type="button" class="btn btn-outline-light" style="width:100%;" id='special-action-btn' data-bs-toggle="modal" data-bs-target="#special-actions-modal">
 							Special Actions
@@ -428,8 +428,8 @@
 										<hr class="m-1">
 
 										<div style="text-align: center;">
-											<button type="button" id="show-adversary-card-btn" class="btn btn-secondary btn-sm" onclick="displayCard('adversary', adversary)">Adversary Card</button>
-											<button type="button" id="show-blight-card-btn" class="btn btn-secondary btn-sm" onclick="displayCard('blight', blightSeq[blightSeqIndex])">Blight Card</button>
+											<button type="button" id="show-adversary-card-btn" class="btn btn-secondary btn-sm" onclick="displayCard('adversary', adversary); save();">Adversary Card</button>
+											<button type="button" id="show-blight-card-btn" class="btn btn-secondary btn-sm" onclick="displayCard('blight', blightSeq[blightSeqIndex]); save();">Blight Card</button>
 										</div>
 									</div>	
 								</div>
