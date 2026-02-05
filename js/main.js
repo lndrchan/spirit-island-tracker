@@ -314,9 +314,8 @@ function nextStep() {
     }
 
     if (phase === 2) {
-        clearCardDisplay();
         if (!blightEnabled) {
-            cardDisplay.html(`
+            displayCard('', `
                 <div class="preview-placeholder cantora-one">
                     <i class="text-muted">Blight Card Disabled</i>
                 </div>
