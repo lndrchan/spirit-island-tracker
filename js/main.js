@@ -161,8 +161,6 @@ $(function() {
     $('.adversary-radio').on('change', function() {
         const selectedAdversary = $(this).val();
         const imagePath = $(this).data('image');
-
-        console.log(selectedAdversary,imagePath);
         
         if (selectedAdversary !== 'none' && imagePath) {
             // Show adversary level selector
@@ -174,7 +172,6 @@ $(function() {
                      class="game-card adversary-preview-image">
             `;
             $('#adversaryPreview').html(previewHTML);
-            $('#adversary-intro-container').html(adversaryIntroText[selectedAdversary]);
         } else {
             // Hide adversary level selector
             $('#adversaryLevelGroup').slideUp();
@@ -186,6 +183,7 @@ $(function() {
                 </div>
             `);
         }
+        $('#adversary-intro-container').html(adversaryIntroText[selectedAdversary]);
     });
 
     $('#customSequencesEnabled').on('change', function() {
@@ -632,6 +630,20 @@ function removeInvaderCard() {
     save();
 }
 
+function accelerateInvaderCard() {
+    for (let i = invaderSeqIndex; i < invaderSeq.length; i++) {
+        if (codeToLevel(invaderSeq[i]) === Math.min(...invaderLevelSeq.slice(invaderSeqIndex))) {
+            code = invaderSeq.splice(i, 1)[0];
+            invaderLevelSeq.splice(i, 1);
+            alert(`The top Invader Card has been removed from the deck. It was a ${codeToString(code)} Card. `)
+            break;
+        }
+    }
+    updateInvaderCard(true);
+    updateUI();
+    save();
+}
+
 // Remove first item of phase list and generate new phase list item at bottom of list
 function advancePhaseList(count) {
 
@@ -854,16 +866,6 @@ function setup() {
     }
     
     invaderSeq = generateInvaderSeq(invaderLevelSeq);
-
-    // Sweden 4: discard top card of lowest invader stage remaining
-    if (adversary === 'sweden' && adversaryLevel >= 4) {
-        for (let i = 0; i < invaderSeq.length; i++) {
-            if (codeToLevel(invaderSeq[i]) === Math.min(...invaderLevelSeq)) {
-                invaderSeq.splice(i, 1);
-                break;
-            }
-        }
-    }
     invaderCards = [[],[],[],[invaderSeq[0]]];
 
     // Start at Turn 0 Invader phase
@@ -1534,17 +1536,6 @@ function spiritsMayYetDream() {
     save();
 }
 
-function terrorSpikesUpwards() {
-    // Resolve first earned fear card now
-
-    if (earnedFearCards === 0) {
-        alert('No earned Fear Cards to draw.');
-        return;
-    }
-
-    
-}
-
 function fracturedDaysPower(deck, strength) { 
 
     if (![1,6].includes(phase)) {
@@ -1562,15 +1553,7 @@ function fracturedDaysPower(deck, strength) {
 
         if (strength === 0) {
             
-            stage = codeToLevel(invaderCode);
-            if (isNaN(stage)) {
-                stage = 0;
-                terrain = invaderCode;
-                alert(`The top card of the Invader Deck is a ${invaderCardDict[terrain]} card. You shuffle it with the second card of the deck. `);
-            } else {
-                terrain = invaderCode[1];
-                alert(`The top card of the Invader Deck is a Stage ${stage} ${invaderCardDict[terrain]} card. You shuffle it with the second card of the deck.`);
-            }
+            alert(`The top card of the Invader Deck is a ${codeToString(invaderCode)} card. You shuffle it with the second card of the deck.`);
 
             if (Math.random() >= 0.5) {
                 // Shuffle two top cards
@@ -1641,4 +1624,20 @@ function isValidCode(code) {
 function codeToLevel(code) {
     if (isNaN(code[0])) return code;
     return parseInt(code[0]);
+}
+
+function codeToString(code) {
+    stage = codeToLevel(code);
+    if (isNaN(stage)) {
+        stage = 0;
+        terrain = code;
+        return `${invaderCardDict[terrain]}`;
+    } else {
+        let terrain = '';
+        for (let i = 1; i < code.length; i++) {
+            terrain += (invaderCardDict[code[i]]);
+            if (i !== code.length-1) terrain += ' ';
+        }
+        return `Stage ${stage} ${terrain}`;
+    }
 }
