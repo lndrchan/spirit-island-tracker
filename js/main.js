@@ -362,8 +362,9 @@ function nextStep() {
     if (phase === 5) {    
         updateInvaderCard(true);
         updateInvaderBadge(true);
+        invaderSeqIndex++;
+        updateUI();
         displayCard('adversary', adversary)
-        
     }
 
     // Slow power phase: advance invader card
@@ -1196,8 +1197,6 @@ function advanceInvaderCard() {
         invaderCards[i] = newArray;
     }
 
-    if (!invaderCardActions['explore']['lock']) invaderSeqIndex++;
-
     if (invaderSeqIndex === invaderSeq.length) {
         alert('This is the last turn before time runs out...')
     }
@@ -1562,8 +1561,6 @@ function spiritsMayYetDream() {
         return;
     }
 
-    
-
     // Flip all earned fear cards
     for (let i = 0; i < earnedFearCards; i++) {
         drawCard('fear');
@@ -1736,6 +1733,7 @@ function flipTopInvaderCard(event) {
 
     // Update the invader card display
     updateInvaderCard(true);
+    updateUI();
     save();
 }
 
