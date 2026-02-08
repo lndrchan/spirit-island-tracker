@@ -1062,7 +1062,7 @@ function updateUI() {
     });
     
     let redrawEnabledPhases = [3,4];
-    if (redrawEnabledPhases.includes(phase)) {
+    if (redrawEnabledPhases.includes(phase) && turn > 1) {
         $('#redraw-btn').removeAttr('disabled');
     } else {
         $('#redraw-btn').attr('disabled','');
