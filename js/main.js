@@ -279,6 +279,11 @@ $(function() {
 // Function attached to next step button. 
 // Checks if advance phase or if there are things that need resolving. 
 function nextStep() {
+    if (phase === 5 && invaderSeqIndex > invaderSeq.length) {
+        alert('The Invaders have taken over Spirit Island. You have lost...');
+        return;
+    }
+
     if (phase === 5 && turn === 0) {
         advancePhaseList(3); 
         advanceInvaderCard();
@@ -369,7 +374,14 @@ function nextStep() {
 
     // Slow power phase: advance invader card
     if (phase === 6) {
+        if (invaderSeqIndex > invaderSeq.length) {
+            alert('You have reached the end of the Invader Deck. The Invaders will win if Victory is not achieved in this phase...')
+            return;
+        }
         advanceInvaderCard();
+        if (invaderSeqIndex === invaderSeq.length) {
+            alert('This is the last turn before time runs out...')
+        }
     }
 
     if (phase === 7) {
@@ -889,6 +901,7 @@ function setup() {
     
     invaderSeq = generateInvaderSeq(invaderLevelSeq);
     invaderCards = [[],[],[],[invaderSeq[0]]];
+    invaderSeqIndex = 1;
 
     // Start at Turn 0 Invader phase
     phase = 5;
@@ -1196,19 +1209,14 @@ function advanceInvaderCard() {
 
         invaderCards[i] = newArray;
     }
-
-    if (invaderSeqIndex === invaderSeq.length) {
-        alert('This is the last turn before time runs out...')
-    }
-    if (invaderSeqIndex > invaderSeq.length) {
-        alert('You have reached the end of the Invader Deck. The Invaders have taken over the Island...')
-        return;
-    }
     
-    let nextCard = invaderSeq[invaderSeqIndex+1];
+    let nextCard = invaderSeq[invaderSeqIndex];
 
-    invaderCards[3] = [];
-    if (nextCard) invaderCards[3].push(nextCard);
+    if (nextCard) {
+        invaderCards[3] = [nextCard];
+    } else {
+        invaderCards[3] = [];
+    }
 
     updateInvaderCard(false);
 }
@@ -1511,9 +1519,13 @@ function processCustomSequences() {
     ];
     
     for (let level of levels) {
-        if (isNaN(parseInt(level)) || parseInt(level) < 1) {
+        if (parseInt(level) < 1) {
             alert('Fear card counts must be positive numbers');
             return false;
+        }
+        if (isNaN(parseInt(level))){
+            fearLevelSeqCustom = [];
+            return true;
         }
     }
     fearLevelSeqCustom = levels;
@@ -1709,7 +1721,7 @@ function removeCardFromDeck(cardIndex) {
 function flipTopInvaderCard(event) {
     
     // Check if there are cards in the invader deck
-    if (invaderSeqIndex + 1 >= invaderSeq.length) {
+    if (invaderSeqIndex + 1 > invaderSeq.length) {
         alert('No cards left in Invader Deck to reveal. ');
         return;
     }
@@ -1719,11 +1731,11 @@ function flipTopInvaderCard(event) {
         return;
     }
 
-    invaderSeqIndex++;
     const topCard = invaderSeq[invaderSeqIndex];
     invaderCards[3].push(topCard);
-
+    
     // Update the invader card display
+    invaderSeqIndex++;
     updateInvaderCard(true);
     updateUI();
     save();
