@@ -97,6 +97,14 @@
     margin-top: 10px;
 }
 
+.invader-card-label-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
 /* Card styling */
 .game-card-invader {
     max-width: 120px;
@@ -534,7 +542,9 @@
 }
 
 /* Card action buttons */
-.btn-card-action {
+.btn-card-action,
+.btn-card-action-style
+{
     border-color: rosybrown;
     color: rosybrown;
     padding: 6px 9px;
@@ -543,14 +553,18 @@
     text-transform: uppercase;
 }
 
-.btn-card-action:hover {
+.btn-card-action:hover,
+.btn-card-action-style:hover
+{
     border-color: white;
     color: white;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Active/lit state with white glow */
-.btn-card-action.active {
+.btn-card-action.active,
+.btn-card-action-style.show
+{
     background-color: white;
     border-color: white;
     color: #212529; /* Dark text on white background */

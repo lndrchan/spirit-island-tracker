@@ -529,6 +529,15 @@ function drawCard(type) {
             break;
         case 'event':
             if (!eventEnabled) return;
+            if (turn == 1) {
+                displayCard('', `
+                    <div class="preview-placeholder cantora-one">
+                        <i class="text-muted">No Event Card drawn on Turn 1. The top Event Card has been discarded. </i>
+                    </div>
+                `)
+                eventSeqIndex++;
+                return;
+            }
             displayCard('event', eventSeq[eventSeqIndex])
             cardHistoryEventIndex = eventSeqIndex;
             if (eventSeq[eventSeqIndex] === 1) {
