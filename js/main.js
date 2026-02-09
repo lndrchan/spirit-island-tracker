@@ -367,7 +367,7 @@ function nextStep() {
     if (phase === 5) {    
         updateInvaderCard(true);
         updateInvaderBadge(true);
-        invaderSeqIndex++;
+        if (!invaderCardActions['explore']['lock']) invaderSeqIndex++;
         updateUI();
         displayCard('adversary', adversary)
     }
