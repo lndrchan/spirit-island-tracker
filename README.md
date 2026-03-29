@@ -31,7 +31,6 @@ This is a personal project and is only meant to complement the board game rather
     - Habsburg Mining Expedition 'Salt Deposit' Card
     - However, Supporting Adversaries (combinations) are **not** supported. 
 - All Spirits are supported. However, some of them need **Special Actions** with this tool to resolve their effects: 
-    - Bringer of Dreams and Nightmares: **Spirits May Yet Dream**
     - Fractured Days Split the Sky: **Visions of a Shifting Future**
 - Use Scenarios at your own discretion. Support for specific Scenarios will be considered, but not guaranteed.
 - Vertical screens and small screens are **not** supported. Please use a sufficiently sized horizontal screen (laptops, tablets etc.) and adjust text size as needed. 
