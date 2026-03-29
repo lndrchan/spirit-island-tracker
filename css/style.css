@@ -375,6 +375,18 @@
     overflow-y: auto;
 }
 
+@media (max-width: 767px) {
+    .container-fluid {
+        height: auto;
+        overflow: visible;
+    }
+
+    .left-bar-column {
+        max-height: none;
+        overflow-y: visible;
+    }
+}
+
 .left-bar,
 .right-bar,
 .left-bar-bottom
