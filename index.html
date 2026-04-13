@@ -48,6 +48,10 @@
 												<label class="btn btn-outline-primary">
 													<input type="radio" name="playerCount" value="6"> 6
 												</label>
+												<label class="btn btn-outline-primary" id="playerCount-custom-label">
+													<input type="radio" name="playerCount" value="custom" id="playerCount-custom-radio">
+													<input type="number" id="playerCount-custom-input" min="1" max="99" placeholder="#" style="width:3em; background:transparent; border:none; outline:none; color:inherit; text-align:center;" onclick="event.stopPropagation(); document.getElementById('playerCount-custom-radio').checked=true;" oninput="document.getElementById('playerCount-custom-radio').checked=true; var hasVal=this.value!==''; document.getElementById('playerCount-custom-label').classList.toggle('active', hasVal); if(hasVal) $(this).closest('.btn-group').find('label').not('#playerCount-custom-label').removeClass('active');">
+												</label>
 											</div>
 										</div>
 										
@@ -616,67 +620,6 @@
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-md-7">
-						<!--
-						<div class="special-action-section">
-							<div class="row special-action-row">
-
-								<div class="col-md-6"><h5>Invader Deck</h5></div>
-								<div class="col-md-6">
-									<button type="button" class="btn btn-secondary special-action-btn" style="text-transform: none;" onclick="accelerateInvaderCard()">
-										Accelerate Invader Deck
-									</button>
-								</div>
-							</div>
-						</div>
-						<hr>
-
-						<div class="special-action-section">
-
-							<h5>Events</h5>
-
-							<div class="row special-action-row">
-								<div class="col-md-6 special-action-label">
-									Far-Off Wars Touch the Island
-								</div>
-								<div class="col-md-6">
-									<button type="button" class="btn btn-secondary special-action-btn" onclick="addFearCard(terrorLevel)">
-										Add Fear Card to Top of Fear Deck
-									</button>
-								</div>
-							</div>
-
-
-							<div class="row special-action-row">
-								<div class="col-md-4 special-action-label">
-									Rising Interest in the Island
-								</div>
-								<div class="col-md-8">
-									<button type="button" class="btn btn-secondary special-action-btn" onclick="removeFearCard(true)">
-										Remove Top Fear Card
-									</button>
-									<button type="button" class="btn btn-danger special-action-btn" onclick="removeInvaderCard()">
-										Remove Top Invader Card
-									</button>
-								</div>
-							</div>
-
-							<div class="row special-action-row">
-								<div class="col-md-6 special-action-label">
-									Terror Spikes Upwards
-								</div>
-								<div class="col-md-6">
-									<button type="button" class="btn btn-secondary special-action-btn" onclick="terrorSpikesUpwards()">
-										Resolve First Earned Fear Card Now
-									</button>
-								</div>
-							</div>
-
-
-						</div>
-
-						<hr>
-						-->
-
 						<div class="special-action-section">
 							<h5>Fractured Days Split the Sky (Visions of a Shifting Future)</h5>
 

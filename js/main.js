@@ -968,6 +968,7 @@ function setup() {
 
     // Testing with Prussia 6. Delete before release. 
     playerCount = $('input[name="playerCount"]:checked').val();
+    if (playerCount === 'custom') playerCount = parseInt($('#playerCount-custom-input').val());
     adversary = $('input[name="adversary"]:checked').val();
     adversaryLevel = $('input[name="adversaryLevel"]:checked').val() || 0;
 
@@ -1669,6 +1670,13 @@ function validateSetupForm() {
     if (!playerCount) {
         alert('Please select number of players');
         return false;
+    }
+    if (playerCount === 'custom') {
+        const customVal = parseInt($('#playerCount-custom-input').val());
+        if (!customVal || customVal < 1 || !Number.isInteger(customVal)) {
+            alert('Please enter a valid number of players');
+            return false;
+        }
     }
     
     if (!adversary) {
