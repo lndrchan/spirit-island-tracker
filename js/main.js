@@ -1251,6 +1251,8 @@ function updateUI() {
     fearProgressBar.attr('style', 'width: ' + fear / maxFear * 100 + '%');
     fearProgressBar.html(fear + ' / ' + maxFear);
 
+    $('#missionaries-arrive-btn').prop('disabled', eventSeqIndex === 0 || eventSeq[eventSeqIndex - 1] !== 17);
+
     // If in invader phase and explore revealed, show explore.
     if (phase === 5 && exploreRevealed) {updateInvaderBadge(true)} else {updateInvaderBadge(false)}
     
@@ -1753,6 +1755,22 @@ function slaveRebellion() {
     }
 
     updateUI(); 
+    save();
+}
+
+function missionariesArrive() {
+    var card = eventSeq[eventSeqIndex - 1];
+
+    if (eventSeqIndex > eventSeq.length - 3) {
+        eventSeq = generateSeq('event');
+        eventSeqIndex = 0;
+        eventSeq.splice(2, 0, card);
+    } else {
+        eventSeq.splice(eventSeqIndex + 2, 0, card);
+    }
+
+    alert('Missionaries Arrive has been returned to the Event Deck under the top 2 cards.');
+    updateUI();
     save();
 }
 
