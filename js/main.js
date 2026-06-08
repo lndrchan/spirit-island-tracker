@@ -1658,10 +1658,19 @@ function redrawBlightCard() {
         return;
     }
 
-    if (blightSeqIndex >= blightSeq.length-1) blightSeq = generateSeq('blight');
-    blightSeqIndex = 0;
-    displayCard('blight', blightSeq[blightSeqIndex]);
+    let previousBlightCard = blightSeq[blightSeqIndex];
     blightSeqIndex++;
+
+    if (blightSeqIndex >= blightSeq.length) {
+        blightSeq = generateSeq('blight');
+        blightSeqIndex = 0;
+
+        if (blightSeq.length > 1 && blightSeq[blightSeqIndex] === previousBlightCard) {
+            [blightSeq[0], blightSeq[1]] = [blightSeq[1], blightSeq[0]];
+        }
+    }
+
+    displayCard('blight', blightSeq[blightSeqIndex]);
     save();
 }
 
