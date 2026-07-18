@@ -13,6 +13,11 @@ var playerCount = 0;
 var adversary = '';
 var adversaryLevel = 0;
 
+// Fallback level-row geometry (% of card height) used only if an adversary has no entry
+// in `adversaryLevelBoundaries` (js/adversary-config.js). Per-card values are auto-detected
+// from each card's brown divider lines; see tools/detect_boundaries.py.
+var DEFAULT_ADVERSARY_BOUNDARIES = { tops: [25, 39, 51, 61, 73, 86], bottom: 97 };
+
 var eventEnabled = true;
 var blightEnabled = true;
 
@@ -169,13 +174,12 @@ $(function() {
         if (selectedAdversary !== 'none' && imagePath) {
             // Show adversary level selector
             $('#adversaryLevelGroup').slideDown(function() { $(this).css('display', 'flex'); });
-            
-            // Update preview with image
-            const previewHTML = `
-                <img src="./assets/adversary/${imagePath}" 
-                     class="game-card adversary-preview-image">
-            `;
-            $('#adversaryPreview').html(previewHTML);
+
+            // Update preview with image, wrapped so the level overlay sits on it
+            const selectedLevel = $('input[name="adversaryLevel"]:checked').val() || 1;
+            $('#adversaryPreview').empty().append(
+                buildAdversaryCardWrapper(selectedAdversary, selectedLevel, false)
+            );
         } else {
             // Hide adversary level selector
             $('#adversaryLevelGroup').slideUp();
@@ -189,6 +193,29 @@ $(function() {
         }
         $('#adversary-intro-container').html(adversaryIntroText[selectedAdversary]);
     });
+
+    // Update the preview's level overlay live as the level is changed in setup
+    $('input[name="adversaryLevel"]').on('change', function() {
+        const $overlay = $('#adversaryPreview .adversary-level-overlay');
+        if (!$overlay.length) return;
+        const adversary = $('#adversaryPreview img').data('adversary');
+        setAdversaryOverlayLevel($overlay, $(this).val(), getAdversaryBoundaries(adversary));
+    });
+
+    // Mirror the level overlay into the zoom plugin's zoomed adversary card. The plugin
+    // appends/removes a .zoom-img-wrap directly on <body>; react to both so the shade
+    // appears on the zoomed image and the in-card overlay is restored when zoom closes.
+    new MutationObserver(function (mutations) {
+        for (let i = 0; i < mutations.length; i++) {
+            const m = mutations[i];
+            for (let j = 0; j < m.addedNodes.length; j++) {
+                if (m.addedNodes[j].classList && m.addedNodes[j].classList.contains('zoom-img-wrap')) onZoomOpen();
+            }
+            for (let j = 0; j < m.removedNodes.length; j++) {
+                if (m.removedNodes[j].classList && m.removedNodes[j].classList.contains('zoom-img-wrap')) onZoomClose();
+            }
+        }
+    }).observe(document.body, { childList: true });
 
     $('#customSequencesEnabled').on('change', function() {
         if ($(this).is(':checked')) {
@@ -578,6 +605,93 @@ function drawCard(type) {
     }
 }
 
+// Look up this adversary's detected level-row boundaries, falling back to a default.
+function getAdversaryBoundaries(adversary) {
+    var b = (typeof adversaryLevelBoundaries !== 'undefined') ? adversaryLevelBoundaries[adversary] : null;
+    return b || DEFAULT_ADVERSARY_BOUNDARIES;
+}
+
+// CSS gradient that is transparent except for a dark band covering the level rows that
+// are NOT in play (from tops[level] down to the bottom of the card). Drawn on a full-box
+// overlay so a CSS transform scales the shading in lock-step with the image -- this is
+// what lets the shade carry into the zoom plugin's scaled view. The bottom rounded corners
+// come from the overlay's border-radius.
+function adversaryOverlayGradient(level, boundaries) {
+    var top = boundaries.tops[level];
+    var dark = 'rgba(0, 0, 0, 0.75)';
+    return 'linear-gradient(to bottom, transparent 0%, transparent ' + top + '%, '
+         + dark + ' ' + top + '%, ' + dark + ' 100%)';
+}
+
+// Position the level-darkening overlay for the selected adversary level (0-6).
+// Levels are cumulative, so we darken the higher rows that are NOT in play. Level 6
+// leaves everything visible (overlay hidden); level 0 darkens all level rows.
+function setAdversaryOverlayLevel($overlay, level, boundaries) {
+    if (!$overlay || !$overlay.length) return;
+    level = parseInt(level, 10) || 0;
+    if (level >= 6) {
+        $overlay.hide();
+        return;
+    }
+    $overlay.show().css('background', adversaryOverlayGradient(level, boundaries));
+}
+
+// Build a wrapper that shrink-wraps an adversary card image and carries a level overlay
+// sibling. The overlay is sized as a percentage of the wrapper (= the image), so it stays
+// aligned at any rendered size. `adversary` selects per-card boundaries; `zoom` enables
+// click-to-zoom (in-game). The data-* attrs let the zoom carry-over find the right card.
+function buildAdversaryCardWrapper(adversary, level, zoom) {
+    var boundaries = getAdversaryBoundaries(adversary);
+    var $img = $('<img>')
+        .addClass('game-card game-card-h')
+        .attr('src', './assets/adversary/' + adversary + '.jpg')
+        .attr('data-adversary', adversary)
+        .attr('data-level', level);
+    if (zoom) $img.attr('data-action', 'zoom');
+    var $overlay = $('<div>', { class: 'adversary-level-overlay' });
+    setAdversaryOverlayLevel($overlay, level, boundaries);
+    return $('<div>', { class: 'adversary-card-wrapper' }).append($img, $overlay);
+}
+
+// --- Zoom carry-over: mirror the level overlay into the zoom plugin's scaled view. ---
+// zoom-vanilla moves the clicked <img> into a .zoom-img-wrap and scales it via
+// transform: scale(). We add a matching full-box overlay (same gradient + same transform)
+// so the shade tracks the zoomed image, and mirror transform changes for zoom-out too.
+var zoomStyleObserver = null;
+var zoomSourceOverlay = null;
+
+function onZoomOpen() {
+    var wrap = document.querySelector('.zoom-img-wrap');
+    if (!wrap) return;
+    var img = wrap.querySelector('img[data-adversary]');
+    if (!img) return; // zoomed image isn't an adversary card
+    var level = parseInt(img.getAttribute('data-level'), 10) || 0;
+    if (level >= 6) return; // no shading at max level
+    var boundaries = getAdversaryBoundaries(img.getAttribute('data-adversary'));
+    // Hide the in-card overlay so no floating band shows while the backdrop fades in.
+    zoomSourceOverlay = document.querySelector('#main-card-display .adversary-level-overlay');
+    if (zoomSourceOverlay) zoomSourceOverlay.style.display = 'none';
+    var overlay = document.createElement('div');
+    overlay.className = 'adversary-level-overlay';
+    overlay.style.background = adversaryOverlayGradient(level, boundaries);
+    overlay.style.transformOrigin = '50% 50%';
+    overlay.style.transition = 'transform 300ms';
+    overlay.style.zIndex = '667'; // paint above the zoomed image (.zoom-img is z-index 666)
+    wrap.appendChild(overlay);
+    // Match the image's scale transform now (zoom-in) and on later changes (zoom-out).
+    var apply = function () { overlay.style.transform = img.style.transform || ''; };
+    void overlay.offsetWidth; // commit the initial (unscaled) state so the transition runs in sync
+    apply();
+    if (zoomStyleObserver) zoomStyleObserver.disconnect();
+    zoomStyleObserver = new MutationObserver(apply);
+    zoomStyleObserver.observe(img, { attributes: true, attributeFilter: ['style'] });
+}
+
+function onZoomClose() {
+    if (zoomStyleObserver) { zoomStyleObserver.disconnect(); zoomStyleObserver = null; }
+    if (zoomSourceOverlay) { zoomSourceOverlay.style.display = ''; zoomSourceOverlay = null; }
+}
+
 function displayCard(type, content) {
 
     if (type == 'adversary' && content == 'none') {
@@ -601,23 +715,26 @@ function displayCard(type, content) {
             cardDisplay.fadeIn(300);
             return;
         }
-        const $img = $('<img>')
-            .addClass('game-card')
-            .attr('src', `./assets/${type}/${content}.jpg`)
-            .attr('data-action', 'zoom');
-        
+        // Adversary cards are wrapped so a level-darkening overlay can sit on them;
+        // other card types render as a plain image as before.
+        let $element;
         if (type === 'adversary') {
-            $img.addClass('game-card-h');
+            $element = buildAdversaryCardWrapper(content, adversaryLevel, true);
+        } else {
+            $element = $('<img>')
+                .addClass('game-card')
+                .attr('src', `./assets/${type}/${content}.jpg`)
+                .attr('data-action', 'zoom');
         }
-        
-        // Add image and fade container back in
-        cardDisplay.append($img).fadeIn(300, function() {
+
+        // Add element and fade container back in
+        cardDisplay.append($element).fadeIn(300, function() {
             // Remove inline styles after fade completes
             cardDisplay.css({
                 'opacity': '',
                 'display': ''
             });
-            $img.css({
+            $element.css({
                 'opacity': '',
                 'display': ''
             });

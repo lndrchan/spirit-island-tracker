@@ -82,6 +82,24 @@
     background-position-x: 50%;
     background-position-y: 50%;
     border-radius: 12px;
+    overflow-x: auto;       /* horizontal scroll when slots don't fit */
+    overflow-y: hidden;     /* keep content restrained within the outline */
+}
+
+/* Themed scrollbar for the invader area */
+.invader-area::-webkit-scrollbar {
+    height: 10px;
+}
+.invader-area::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+.invader-area::-webkit-scrollbar-thumb {
+    background: rosybrown;
+    border-radius: 5px;
+}
+.invader-area::-webkit-scrollbar-thumb:hover {
+    background: #b07866;
 }
 
 /* Invader Card Area */
@@ -89,7 +107,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1;
+    flex: 1 0 auto;     /* grow to fill extra space, but never shrink (overflow -> scrollbar) */
 }
 
 /* Invader Card Container */
@@ -97,12 +115,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0px 24px 0px 24px;
+    padding: 8px;
     border: 2px dashed rosybrown;
     border-radius: 8px;
     background-color: rgba(188, 143, 143, 0.1);
-    min-height: 200px;   
-    min-width: 150px;
+    /* Sized to the portrait invader card (517x788): card at 120px wide is ~183px tall,
+       so the outline (incl. 8px padding + 2px border) is 140x203 - same proportions as the card. */
+    min-width: 140px;
+    min-height: 203px;
 }
 
 /* Single card - centered */
@@ -160,6 +180,7 @@
     display: flex;
     user-select: none;
     transform: translateY(-4vh);
+    flex-shrink: 0;     /* don't compress arrows; let the row overflow to scroll */
 }
 
 /* Invader Card Label */
@@ -175,8 +196,9 @@
 @media (max-width: 768px) {
     .invader-area {
         flex-direction: column;
+        overflow: visible;     /* column layout shouldn't clip or scroll horizontally */
     }
-    
+
     .invader-card-arrow {
         transform: rotate(90deg);
         font-size: 2rem;
@@ -199,6 +221,45 @@
 
 #main-card-display .game-card {
     transition: opacity 300ms ease-in-out;
+}
+
+/* Adversary card level-darkening overlay.
+   The wrapper shrink-wraps the image so its box always equals the image's
+   rendered box; the overlay is positioned as a percentage of the wrapper,
+   so the darkened band scales with the image at any size or position. */
+.adversary-card-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+    max-width: 100%;
+}
+.adversary-card-wrapper > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0; /* neutralize .game-card's margins so the wrapper hugs the image */
+}
+/* Each context keeps the sizing the bare image used to have, now on the wrapper */
+#adversaryPreview .adversary-card-wrapper {
+    width: 98%;
+}
+#main-card-display .adversary-card-wrapper {
+    width: 100%;
+    height: auto;
+}
+.adversary-level-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background is a level-dependent linear-gradient set inline by JS; using a gradient
+       on a full-box overlay means a CSS transform scales the shading with the image,
+       which is what lets it carry into the zoom plugin's scaled view. */
+    pointer-events: none; /* let clicks reach the image so zoom still works */
+    z-index: 2;           /* above the image, below the zoom backdrop (420) */
+    border-radius: 0 0 12px 12px; /* follow the card's rounded bottom corners (scales with zoom) */
+    overflow: hidden;
 }
 
 .btn

@@ -102,6 +102,25 @@ const invaderCardDict = {
     'ss': 'Salt'
 }
 
+// Per-adversary level-row geometry for the level-darkening overlay.
+// `tops` are the y-positions (as % of card height from the top) of the TOP edge of each
+// level row 1..6. The overlay darkens from tops[selectedLevel] down to the bottom of the
+// card (the higher levels that are not in play). `bottom` is the detected bottom of the
+// level table (kept for reference; the shading itself extends past it to the card edge).
+// Values are auto-detected from the brown horizontal divider lines printed on each card
+// via tools/detect_boundaries.py --js, so they match each card's actual layout (which
+// differs per adversary, since level effect text varies in length).
+const adversaryLevelBoundaries = {
+    'prussia': { tops: [25.0, 38.6, 50.9, 60.5, 72.7, 85.6], bottom: 97.4 },
+    'england': { tops: [25.1, 39.0, 48.5, 68.0, 74.2, 80.2], bottom: 97.2 },
+    'sweden': { tops: [25.1, 43.2, 52.3, 58.8, 71.8, 81.8], bottom: 97.2 },
+    'france': { tops: [25.1, 39.7, 52.7, 61.6, 71.0, 84.3], bottom: 97.2 },
+    'habsburg-livestock': { tops: [26.0, 40.4, 53.0, 62.6, 75.2, 87.7], bottom: 97.3 },
+    'russia': { tops: [26.0, 45.7, 54.7, 64.0, 72.7, 85.6], bottom: 97.3 },
+    'scotland': { tops: [25.7, 42.5, 54.7, 64.0, 72.7, 85.6], bottom: 97.3 },
+    'habsburg-mining': { tops: [26.3, 50.1, 59.2, 68.2, 80.1, 89.1], bottom: 97.4 },
+};
+
 const adversaryConfig = {
 
     'none': {
