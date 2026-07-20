@@ -1,3 +1,10 @@
+html {
+  /* Fluid: scales continuously with viewport width so text shrinks before components
+     overflow — 80% at ~530px and below, ~107% at 900px, ~130% at 1200px, capped at the
+     original 100% at ~1730px and wider. One curve for both layouts. */
+  font-size: clamp(80%, 0.4rem + 1vw, 100%);
+}
+
 .btn-group-toggle input[type="radio"] {
     display: none;
 }
@@ -51,6 +58,16 @@
 
 }
 
+:root {
+    /* Fluid invader card width: sized so the card fills the height the invader area
+       leaves above its label (area 45vh - 60px, minus 24px padding, label and 20px
+       container chrome; the slot's action buttons overlay the card, so they take no
+       height). Floored at 60px on very short viewports.
+       .game-card-invader's max-height: 100% is the hard guard that keeps the card
+       from ever pushing the label out of the area. */
+    --invader-card-w: max(60px, calc(29.5vh - 108px));
+}
+
 .container-fluid
 {
     padding: 24px;
@@ -59,15 +76,43 @@
 }
 
 
+/* Main card column: the card display with a footer-style bar of card-view buttons */
+.main-card-column
+{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .main-card-display
 {
     display: flex;
     border:  1px solid gray;
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0;
     padding: 12px;
-    height: 100%;
-    justify-content: center; 
+    flex: 1 1 auto;
+    min-height: 0;
+    justify-content: center;
     align-items: center;
+}
+
+.card-view-bar
+{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border: 1px solid gray;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+}
+
+.card-view-bar .btn
+{
+    flex: 1 1 auto;
+    margin: 0;
+    white-space: nowrap;
 }
 
 /* Invader Area - Main Container */
@@ -108,6 +153,7 @@
     flex-direction: column;
     align-items: center;
     flex: 1 0 auto;     /* grow to fill extra space, but never shrink (overflow -> scrollbar) */
+    align-self: stretch; /* fill the invader area's full height so the container can grow into it */
 }
 
 /* Invader Card Container */
@@ -115,40 +161,43 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative; /* anchors the slot's action toolbar (popover + toggled-on buttons) */
+    flex: 1 1 auto;     /* grow to fill all slot height above the label + buttons */
+    min-height: 0;      /* ...and shrink rather than push the buttons out of the area */
     padding: 8px;
     border: 2px dashed rosybrown;
     border-radius: 8px;
     background-color: rgba(188, 143, 143, 0.1);
-    /* Sized to the portrait invader card (517x788): card at 120px wide is ~183px tall,
-       so the outline (incl. 8px padding + 2px border) is 140x203 - same proportions as the card. */
-    min-width: 140px;
-    min-height: 203px;
+    /* Width floor for the portrait invader card (517x788, ratio 0.656): the outline
+       incl. 8px padding + 2px border is card width + 20px. Card width is fluid
+       (--invader-card-w), so the outline shrinks with the card on short screens. */
+    min-width: calc(var(--invader-card-w) + 20px);
 }
 
-/* Single card - centered */
-.invader-card-container .game-card-invader:only-child {
+/* Single card - centered (of-type: the slot's action toolbar is also a child) */
+.invader-card-container .game-card-invader:only-of-type {
     margin: 0;
     z-index: 1;
 }
 
 /* Multiple cards - overlapping effect */
-.invader-card-container .game-card-invader:not(:only-child) {
-    margin-left: -70px;
+.invader-card-container .game-card-invader:not(:only-of-type) {
+    margin-left: calc(var(--invader-card-w) * -0.58);
     position: relative;
 }
 
 /* First card - no left margin */
-.invader-card-container .game-card-invader:not(:only-child):first-child {
+.invader-card-container .game-card-invader:not(:only-of-type):first-of-type {
     margin-left: 0;
 }
 
 /* Z-index stacking */
-.invader-card-container .game-card-invader:nth-child(1) { z-index: 1; }
-.invader-card-container .game-card-invader:nth-child(2) { z-index: 2; }
-.invader-card-container .game-card-invader:nth-child(3) { z-index: 3; }
-.invader-card-container .game-card-invader:nth-child(4) { z-index: 4; }
-.invader-card-container .game-card-invader:nth-child(5) { z-index: 5; }
-.invader-card-container .game-card-invader:nth-child(6) { z-index: 6; }
+.invader-card-container .game-card-invader:nth-of-type(1) { z-index: 1; }
+.invader-card-container .game-card-invader:nth-of-type(2) { z-index: 2; }
+.invader-card-container .game-card-invader:nth-of-type(3) { z-index: 3; }
+.invader-card-container .game-card-invader:nth-of-type(4) { z-index: 4; }
+.invader-card-container .game-card-invader:nth-of-type(5) { z-index: 5; }
+.invader-card-container .game-card-invader:nth-of-type(6) { z-index: 6; }
 
 .invader-card-label-container {
     text-align: center;
@@ -160,7 +209,12 @@
 
 /* Card styling */
 .game-card-invader {
-    max-width: 120px;
+    max-width: var(--invader-card-w);
+    /* Never taller than its container: if the width above would make the card
+       overflow the slot, height binds instead and width scales down with the aspect
+       ratio intact. Only takes effect where the container has a definite height (the
+       invader row); in modals/history the percentage resolves against auto = none. */
+    max-height: 100%;
     height: auto;
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -192,20 +246,6 @@
     text-transform: uppercase;
 }
 
-/* Responsive - stack on smaller screens */
-@media (max-width: 768px) {
-    .invader-area {
-        flex-direction: column;
-        overflow: visible;     /* column layout shouldn't clip or scroll horizontally */
-    }
-
-    .invader-card-arrow {
-        transform: rotate(90deg);
-        font-size: 2rem;
-        padding: 10px 0;
-    }
-}
-
 .game-card
 {
     border-radius: 12px;
@@ -221,6 +261,15 @@
 
 #main-card-display .game-card {
     transition: opacity 300ms ease-in-out;
+}
+
+/* Keep the displayed card inside its box: cap the width (its 12px side margins
+   included) and letterbox via object-fit, so height:100% can never force the
+   card to spill out horizontally on narrow or short windows. */
+#main-card-display > .game-card {
+    max-width: calc(100% - 24px);
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* Adversary card level-darkening overlay.
@@ -244,7 +293,10 @@
     width: 98%;
 }
 #main-card-display .adversary-card-wrapper {
-    width: 100%;
+    /* Width-capped so the landscape card (ratio ~1.5) also fits the box vertically:
+       box content height is 55vh minus the card-view bar (~48px), 12px*2 padding and
+       1px*2 border. */
+    width: min(100%, calc((55vh - 74px) * 1.5));
     height: auto;
 }
 .adversary-level-overlay {
@@ -441,7 +493,7 @@
     overflow-y: auto;
 }
 
-@media (max-width: 767px) {
+@media (max-aspect-ratio: 1/1) {
     .container-fluid {
         height: auto;
         overflow: visible;
@@ -483,10 +535,33 @@
     background-size: 180%;
     background-position-x: 40%;
     background-position-y: 80%;
+    /* Content can exceed the 55vh box on short windows: scroll as a last resort
+       instead of spilling over the invader area. */
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+/* Small constant tightening so the right bar's content fits its 55vh box at 1080p
+   instead of spilling ~20-40px over the invader area (early-game worst case). */
+.right-bar > hr {
+    margin: 0.5rem 0;
+}
+
+.right-bar .card-body {
+    padding: 0.75rem;
+}
+
+.right-bar .lh-lg {
+    line-height: 1.6 !important;
+}
+
+.right-bar .fear-panel-bottom {
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 .right-bar-card {
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .left-bar-bottom
@@ -495,9 +570,20 @@
     text-align: center;
 }
 
+#terror-level-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .terror-level-display
 {
-    height: 5em;
+    /* Fluid height: 5em on tall viewports, shrinking on short ones; the pair is
+       width-capped so it can't spill out of the right bar on narrow windows. */
+    height: min(5em, 8.5vh);
+    width: auto;
+    max-width: calc(50% - 26px);
+    object-fit: contain;
 }
 
 .adversary-display
@@ -505,19 +591,42 @@
     width: 90%
 }
 
-.main-area,
-.phase-list-container
+.main-area
 {
     height: 55vh;
+}
+
+/* No fixed height: the column stretches with the row (Bootstrap rows are flex
+   with align-items: stretch), so it always matches the main card display area.
+   Flex column layout pins the buttons to the bottom edge. */
+.phase-list-container
+{
+    display: flex;
+    flex-direction: column;
 }
 
 .phase-list
 {
     width: 100%;
-    height: 75%;
+    /* Fill all column space above the Next step/Undo buttons. min-height: 0 lets
+       it shrink below content size so the short-window overflow rule can scroll. */
+    flex: 1 1 auto;
+    min-height: 0;
     font-family: 'Cantora One';
     overflow: hidden;
     position: relative;
+}
+
+.phase-list-buttons
+{
+    flex-shrink: 0;
+}
+
+/* Snap the Undo button flush to the column's bottom edge (aligns with the
+   bottom of the main card display). */
+.phase-list-buttons .btn:last-child
+{
+    margin-bottom: 0;
 }
 
 .phase-list-animating .list-group-item
@@ -547,9 +656,10 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#phase-list-ravage-badge,
-#phase-list-build-badge,
-#phase-list-explore-badge
+.invader-badge-fourth,
+.invader-badge-ravage,
+.invader-badge-build,
+.invader-badge-explore
 {
     display: inline;
     position: relative;
@@ -603,7 +713,7 @@
 .invader-card-label
 {
     font-family: 'Cantora One';
-    font-size: 1.5em;
+    font-size: clamp(0.9rem, 2.5vh, 1.5rem);
     text-transform: uppercase;
 }
 
@@ -897,7 +1007,9 @@
 #card-history-event,
 #card-history-fear {
     padding: 6px 18px;
-    min-height: 7rem;
+    /* Fluid: 7rem on tall viewports, shrinking on short ones so these sections
+       stop pushing their panels past their boundaries. */
+    min-height: clamp(3.5rem, 12vh, 7rem);
     display: flex;
     flex-direction: column;
 }
@@ -1040,5 +1152,699 @@
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
+}
+
+/* --- Adaptive sizing: keep every component inside its boundary on smaller windows --- */
+
+/* Desktop grid only: the invader area takes exactly the height left under the 55vh
+   main area (55vh + 12px margin + area = 100vh - 48px container padding), so the
+   page never clips at the bottom. In the portrait (mobile) layout it stacks and
+   scrolls, so the original 38vh height stays in effect there. */
+@media (min-aspect-ratio: 1/1) {
+    .invader-area {
+        height: calc(45vh - 60px);
+    }
+}
+
+/* Narrower windows: compact invader action buttons, arrows and phase titles so the
+   invader row and phase list fit without overflowing. */
+@media (max-width: 1500px) {
+    .btn-card-action,
+    .btn-card-action-style {
+        padding: 4px 7px;
+        font-size: 0.85em;
+    }
+
+    .invader-card-arrow {
+        font-size: 2.2rem;
+    }
+
+    .phase-list-title {
+        font-size: 0.95em;
+    }
+
+    .phase-list-icon-container {
+        width: 1.75em;
+    }
+}
+
+/* Narrow left bar: shrink the fear deck badges and titles. */
+@media (max-width: 1400px) {
+    #fear-cards-remaining-container {
+        font-size: 1rem !important;
+    }
+
+    .fear-card-number-title {
+        font-size: 1rem;
+    }
+
+    .fear-badge-slash {
+        width: 8px;
+        margin: 0px 2px;
+    }
+}
+
+/* Short windows: tighter buttons and panels everywhere. */
+@media (max-height: 800px) {
+    .btn {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+
+    .invader-card-label-container {
+        margin-top: 6px;
+    }
+
+    .invader-area {
+        padding: 8px 12px;
+    }
+
+    .right-bar .card-body {
+        padding: 0.5rem;
+    }
+
+    .right-bar .card-header {
+        padding: 0.35rem 0.75rem;
+    }
+}
+
+/* Very short windows only: if the 4 phase items (or wrapped titles) ever exceed the
+   list's box, scroll instead of clipping them off. Base overflow:hidden stays in
+   effect elsewhere so the slide animation is unchanged. */
+@media (max-height: 790px) {
+    .phase-list {
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+}
+
+/* ================= Mobile support ================= */
+
+/* Mobile-only elements: hidden in the desktop layout (the earned-count badge only
+   appears on mobile; desktop shows the earned card thumbnails instead). */
+#mobile-phase-header,
+#mobile-invader-strip,
+.mobile-expand-caret,
+#mobile-fear-earned,
+#left-bar-fear-badge {
+    display: none;
+}
+
+/* Keep the zoom plugin's layers above Bootstrap modals (z-index 1055) so adversary
+   cards can also be zoomed from the setup modal. zoom.css is loaded after this file,
+   so these need !important. */
+.zoom-overlay { z-index: 2000 !important; }
+.zoom-img-wrap, .zoom-img { z-index: 2001 !important; }
+
+/* Coarse pointers: hover lifts are meaningless and can stick after a tap */
+@media (pointer: coarse) {
+    .game-card-invader:hover,
+    .fear-deck-card-wrapper:hover,
+    .invader-deck-card-wrapper:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .phase-list-animating .list-group-item,
+    .phase-list-animating .phase-list-fade-out {
+        transition: none;
+    }
+    .fear-panel-top.overlay-open,
+    .invader-area.overlay-open {
+        animation: none;
+    }
+}
+
+/* ============ Mobile portrait layout (aspect ratio up to 1:1) ============ */
+@media (max-aspect-ratio: 1/1) {
+
+    :root {
+        --dock-h: 76px;    /* height of the fixed Next step/Undo bar */
+        --strip-h: 54px;   /* height of the fixed invader badge strip */
+    }
+
+    /* Mobile reads larger than the desktop fluid curve above (which floors at 80%):
+       90% floor on narrow phones, ramping to 100% by ~490px wide. */
+    html {
+        font-size: clamp(90%, 0.45rem + 1.8vw, 100%);
+    }
+
+    body {
+        overscroll-behavior-y: contain;
+    }
+
+    /* The fixed full-viewport blur is expensive on mobile GPUs */
+    .background-blur {
+        filter: blur(3px);
+    }
+
+    /* --- Flatten the desktop grid into a single scrollable column --- */
+    .container-fluid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 8px calc(var(--dock-h) + var(--strip-h) + 16px + env(safe-area-inset-bottom));
+    }
+    .main-container,
+    .left-bar-column,
+    .main-container > .col-md-9,
+    .main-area,
+    .main-area > .col-md-4,
+    .main-card-column,
+    .phase-list-container,
+    .right-bar {
+        display: contents;
+    }
+
+    .fear-panel-top        { order: 0; }
+    #mobile-phase-header   { order: 1; display: block; }
+    #main-card-display     { order: 2; height: 48vh; height: 48svh; flex: none; }
+    .card-view-bar         { order: 3; }
+    #discard-piles-card    { order: 4; }
+    .right-bar-card        { order: 5; margin-top: 0; }
+    .left-bar-bottom       { order: 6; }
+    #phase-list            { display: none; }
+    .right-bar > hr        { display: none; }
+
+    /* Restrain the adversary card to the mobile display height (48svh box) */
+    #main-card-display .adversary-card-wrapper {
+        width: min(100%, calc((48svh - 26px) * 1.5));
+    }
+
+    /* --- Sticky compressed fear bar --- */
+    .fear-panel-top {
+        position: sticky;
+        top: 0;
+        z-index: 900;
+        padding: 6px 8px;
+        margin: 0;
+        text-align: center;
+        border-radius: 10px;
+    }
+
+    /* Top display row: [terror level + victory condition] [large deck counts] [caret].
+       The desktop "Earned" column and the "Fear Deck" title are not used on mobile. */
+    #fear-card-number-display {
+        padding: 0.2rem 0;
+        align-items: center;
+        --bs-gutter-x: 0.5rem;
+    }
+    #fear-card-number-display > .col-6:first-child { display: none; }
+    .fear-card-number-title { display: none; }
+    #fear-card-number-display > #terror-level-container {
+        width: auto;
+        flex: 0 0 auto;
+    }
+    .fear-panel-top .terror-level-display {
+        height: clamp(2.2rem, 11vw, 3rem);
+        max-width: none;
+        margin: 0 2px;
+        border-radius: 6px;
+    }
+    #fear-card-number-display > #fear-deck-toggle-area {
+        width: auto;
+        flex: 1 1 auto;
+    }
+    #fear-cards-remaining-container { font-size: clamp(1.5rem, 8vw, 2rem) !important; }
+    /* Earned count right of the deck counts; em-based so it shrinks with the
+       container's vw-clamped font on narrow phones instead of overflowing. */
+    #mobile-fear-earned {
+        display: inline;
+        font-size: 0.5em;
+        white-space: nowrap;
+        margin-left: 6px;
+    }
+    /* ...and smaller again in the fullscreen overlay, whose top row is exactly full
+       without it (otherwise it pushes the expand caret off-screen). */
+    .fear-panel-top.overlay-open #mobile-fear-earned {
+        font-size: 0.35em;
+        margin-left: 3px;
+    }
+    .fear-badge-slash { width: 10px; margin: 0px 2px; }
+
+    /* Collapsed bar only shows the top display + the button/progress row; the deck
+       preview lives in the overlay */
+    .fear-panel-top:not(.overlay-open) #fear-deck-inline { display: none !important; } /* beats slideToggle inline styles */
+    #fear-deck-toggle { display: none; } /* desktop caret replaced by the expand caret on mobile */
+
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom {
+        margin: 4px 0 0;
+        display: flex;
+        flex-direction: row;    /* .card defaults to column */
+        align-items: center;
+        gap: 6px;
+    }
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-header { display: none; }
+    /* One row: remove-fear buttons (left), progress bar (center), add-fear (right) */
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-body { order: 2; flex: 1 1 auto; padding: 0; }
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-footer { display: contents; }
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-footer > div { flex: 0 0 27%; }
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-footer > div:first-child { order: 3; } /* add group */
+    .fear-panel-top:not(.overlay-open) .fear-panel-bottom .card-footer > div:last-child { order: 1; }  /* remove group */
+    .fear-panel-top:not(.overlay-open) .progress { height: 24px; }
+
+    /* All four fear buttons the same size, tall enough for a touch target (px, not
+       rem - the fluid root font-size would shrink them on narrow phones) */
+    .fear-panel-top:not(.overlay-open) .fear-btn {
+        height: 46px;
+        font-size: 1.05rem;
+        padding: 0.1em 0.5em;
+        line-height: 1.5;
+        margin: 2px 0;
+    }
+
+    /* The expand caret is the third column of the number display */
+    #mobile-fear-expand {
+        width: auto;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    .fear-deck-toggle-badge { padding: 0 14px; }
+
+    .fear-panel-top > hr { display: none; }
+
+    /* --- Fear overlay (fullscreen expansion of the same panel) ---
+       Contents: the top number display, then the fear deck previews filling all
+       remaining height. No progress bar / fear buttons here - those stay on the
+       collapsed bar. */
+    .fear-panel-top.overlay-open {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        overflow-y: auto;
+        border-radius: 0;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        animation: fear-panel-slide-down 0.25s ease-out;
+    }
+    .fear-panel-top.overlay-open .fear-card-control { display: block; }
+    .fear-panel-top.overlay-open .fear-panel-bottom { display: none; }
+    body.mobile-overlay-open { overflow: hidden; }
+
+    .fear-panel-top.overlay-open #fear-card-number-display {
+        flex: 1 1 auto;
+        min-height: 0;
+        /* Grid, not the .row flex-wrap: wrapped flex lines don't stretch reliably,
+           which collapsed the deck preview to zero height. Row 2 gets all leftover
+           height; gutters come from grid gap instead of Bootstrap's gutter vars. */
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-rows: auto 1fr;
+        gap: 4px 8px;
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 0;
+    }
+    .fear-panel-top.overlay-open #fear-deck-inline {
+        /* Explicit row: with only grid-column set, auto-placement puts this item in
+           row 1 BEFORE the fully-auto number row items (definite-column items place
+           first), scrambling the layout. */
+        grid-row: 2;
+        grid-column: 1 / -1;
+        min-height: 0;
+        /* The collapsed bar centers the number display's items (align-items: center);
+           here the deck preview must stretch to fill the 1fr track instead. */
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-top: none;
+        margin-top: 0;
+        padding: 0 4px;
+        overflow-y: auto;
+    }
+    /* Level sections share the leftover screen height equally, cards centered */
+    .fear-panel-top.overlay-open #fear-deck-inline .fear-deck-level-section {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        padding: 6px 8px;
+        margin-bottom: 0 !important; /* beat the .mb-2 utility */
+    }
+    .fear-panel-top.overlay-open #fear-deck-inline hr { flex: 0 0 auto; width: 100%; }
+    .fear-panel-top.overlay-open .fear-deck-level-arrow { font-size: 1.1rem; }
+
+    /* Taller card graphics: 7 items (6 cards + the add button) always fit the row
+       width, fanning with a 20px overlap. Content width = 100vw - 2px panel border
+       - 24px panel padding - 8px inline padding - 16px section padding, so
+       7w - 6*20px <= 100vw - 50px. Card height = width * 1.4. */
+    .fear-panel-top.overlay-open #fear-deck-inline .fear-deck-card-wrapper {
+        width: calc((100vw + 56px) / 7);
+        margin-right: -20px;
+    }
+    .fear-panel-top.overlay-open #fear-deck-inline .fear-deck-card-wrapper:last-child {
+        margin-right: 0;
+    }
+
+    /* --- Phase header (current phase item only) --- */
+    #mobile-phase-header {
+        font-family: 'Cantora One';
+    }
+    #mobile-phase-header .list-group-item {
+        padding: 10px 12px;
+        font-size: 1.05rem;
+    }
+
+    /* --- Misc buttons (left-bar-bottom) --- */
+    .left-bar-bottom {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 8px;
+        margin-top: 0;
+        padding: 8px;
+    }
+    .left-bar-bottom .btn { margin: 2px 0; }
+    .left-bar-bottom .btn-outline-danger { grid-column: 1 / -1; }
+
+    /* --- Invader strip + dock (fixed bottom) --- */
+    #mobile-invader-strip {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        justify-content: space-between;
+        bottom: calc(var(--dock-h) + env(safe-area-inset-bottom));
+        z-index: 1000;
+        align-items: center;
+        gap: 0.4em;
+        height: var(--strip-h);
+        padding: 4px 0.4em;
+        overflow-x: auto;
+        scrollbar-width: none;  /* an in-strip scrollbar would cram the 54px row */
+        cursor: pointer;
+        font-family: 'Cantora One';
+        background: rgba(10, 10, 10, 0.88);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    #mobile-invader-strip::-webkit-scrollbar { display: none; }
+    .strip-slot {
+        align-items: center;
+        gap: 1px;
+        white-space: nowrap;
+        flex: none;
+    }
+    .strip-label {
+        font-size: 0.9em;   /* em, not rem: fitInvaderStrip() scales the strip's
+                               font-size so long summaries still fit one row */
+        color: #aaa;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+    /* Badge text and trailing notes (e.g. "+ Escalation") share one size, in em so
+       fitInvaderStrip() can scale the whole summary via the strip's font-size.
+       Slots are stacked (label above badges) so a slot is max(label, badges) wide
+       instead of the sum - that is what lets the larger text fit a dual-terrain
+       summary without scrolling. Badge padding and margins are slimmed so the
+       common 3-slot summary fits the screen width unscaled. */
+    .strip-slot .invader-badge-slot { font-size: 0.75em; }
+    /* 1em, not unset: Bootstrap's own .badge font-size is 0.75em, which would
+       compound with the slot's 0.75em and shrink the badges twice */
+    .strip-slot .invader-badge-slot .badge { font-size: 1em; }
+    .strip-slot .invader-badge {
+        margin-left: 1px;
+        margin-right: 1px;
+        padding-left: 0.4em;
+        padding-right: 0.4em;
+    }
+    .strip-caret .fear-deck-toggle-badge { padding: 0 0.55em; }
+    .strip-slot-fourth { display: none; }
+    #mobile-invader-strip.has-fourth .strip-slot-fourth { display: flex; }
+    /* Sticky: the caret stays pinned to the right edge (and reachable) even when a
+       long summary (e.g. England's 4th slot) overflows the strip. */
+    .strip-caret { flex: none; position: sticky; right: 0; background: rgb(10, 10, 10); }
+
+    .phase-list-buttons {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1001;
+        display: flex;
+        gap: 8px;
+        height: calc(var(--dock-h) + env(safe-area-inset-bottom));
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        background: rgba(10, 10, 10, 0.92);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .phase-list-buttons .btn {
+        width: auto !important;   /* beat the inline width:100% */
+        margin: 0;
+    }
+    #btn-next-phase { flex: 1 1 auto; font-size: 1.35rem; }
+    #btn-undo { flex: 0 0 auto; order: -1; font-size: 1.1rem; }
+
+    /* Card-view bar: consistent, legible buttons with a touch-friendly height */
+    .card-view-bar { padding: 8px 12px; }
+    .card-view-bar .btn {
+        font-size: 1.1rem;
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    /* Misc buttons: uniform size, text wraps rather than overflowing its half */
+    .left-bar-bottom .btn { font-size: 1.05rem; white-space: normal; }
+
+    /* --- Invader overlay: docked horizontal bar above the strip --- */
+    /* The four card slots plus the three 20px arrows exactly fill the area's width:
+       each slot is (content width - 60px of arrows) / 4, so no horizontal scrolling
+       is needed to reach any slot. Percentages, not vw: a fixed left:0/right:0
+       element stops short of a classic scrollbar (desktop narrow-window testing)
+       while 100vw does not. The card fills the slot minus the container's chrome
+       (4px padding + 2px border per side) via max-width: 100%. */
+    .invader-area {
+        display: none;
+    }
+    .invader-area.overlay-open {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(var(--dock-h) + var(--strip-h) + env(safe-area-inset-bottom));
+        z-index: 1050;
+        margin-top: 0;
+        border-radius: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        height: 30vh;
+        height: 30svh;
+        padding: 8px;
+        justify-content: center;
+        animation: invader-bar-slide-up 0.25s ease-out;
+    }
+    .invader-area.overlay-open .invader-card-area {
+        flex: 0 0 calc((100% - 60px) / 4);
+        min-width: 0;
+        align-self: stretch;
+    }
+    .invader-area.overlay-open .invader-card-container {
+        min-width: 0;   /* beat the base calc(var(--invader-card-w) + 20px) floor */
+        width: 100%;
+        padding: 4px;
+    }
+    /* .game-card's height:100% + 12px side margins are written for the wide desktop
+       row (height binds there); in these narrow slots they distort the card and
+       overflow the slot, so width governs instead (max-height still guards). */
+    .invader-area.overlay-open .game-card-invader {
+        height: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    /* Re-declare the multi-card fan-out the margin reset above would kill (margin %
+       resolves against the container width = the card width) */
+    .invader-area.overlay-open .invader-card-container .game-card-invader:not(:only-of-type) {
+        margin-left: -58%;
+    }
+    .invader-area.overlay-open .invader-card-container .game-card-invader:not(:only-of-type):first-of-type {
+        margin-left: 0;
+    }
+    .invader-area.overlay-open .invader-card-arrow {
+        transform: none;        /* base rule lifts arrows -4vh, wrong in a short bar */
+        font-size: 1.4rem;
+        width: 20px;
+        padding: 0;
+        justify-content: center;
+        flex: none;
+    }
+    /* A slot is far narrower than a Blight/Event/Fear button row, so the toolbar
+       wraps and the fused group stacks vertically (btn-group-vertical behavior,
+       scoped here because the same DOM stays horizontal on desktop). */
+    .invader-area.overlay-open .invader-card-label-container {
+        width: 100%;
+    }
+    .invader-area.overlay-open .invader-card-label {
+        font-size: 1.2rem;
+        white-space: nowrap;
+    }
+    .invader-area.overlay-open .invader-card-buttons {
+        flex-wrap: wrap;        /* the base .invader-card-buttons rule is nowrap: without
+                                   this the groups shrink to min-content and spill out */
+        justify-content: center;
+    }
+    .invader-area.overlay-open .invader-card-buttons .btn-group {
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0 !important;  /* beat Bootstrap's ms-2 utility */
+    }
+    .invader-area.overlay-open .invader-card-buttons .btn-group > .btn {
+        border-radius: 0;
+        margin-left: 0;
+    }
+    .invader-area.overlay-open .invader-card-buttons .btn-group > .btn:first-child {
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+    .invader-area.overlay-open .invader-card-buttons .btn-group > .btn:last-child {
+        border-radius: 0 0 0.25rem 0.25rem;
+    }
+    .invader-area.overlay-open .invader-card-buttons .btn-group > .btn + .btn {
+        margin-top: -1px;
+    }
+
+    /* --- Setup modal --- */
+    #setup-modal { font-size: 1rem; }
+    #setup-modal .modal-body { overflow-y: auto; }
+    #setup-modal .modal-body > .row > .col-md-4,
+    #setup-modal .modal-body > .row > .col-md-6 {
+        max-height: none;
+        overflow-y: visible;
+    }
+    /* Force the modal columns to stack in the portrait layout (col-md splits at 768px) */
+    #setup-modal .modal-body .row > [class*="col-md"] {
+        width: 100%;
+    }
+    #gameSetupForm .btn-group {
+        flex-wrap: wrap;
+    }
+    #gameSetupForm .btn-group .btn {
+        flex: 1 0 auto;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    #customSequencesSection .row > [class*="col-md"] {
+        margin-bottom: 6px;
+    }
+    .preview-placeholder {
+        min-height: 0;
+    }
+    #gameSetupModalLabel {
+        font-size: 1.4rem;
+    }
+    #startGameBtn {
+        width: 100%;
+    }
+
+    /* --- Special actions modal: stack the two columns --- */
+    #special-actions-modal .modal-body .row > [class*="col-md"] {
+        width: 100%;
+    }
+}
+
+/* --- Invader slot action popover --- */
+/* The per-slot action buttons (lock/blight/event/fear/gear/trash) live inside the
+   card container, out of normal flow, and stay hidden until the slot is clicked; a
+   click anywhere else dismisses the overlay. Toggled-on buttons (.active /
+   .active-yellow, managed by updateUI()/resetInvaderCardActions()) stay visible,
+   anchored at the bottom of the card container on top of the card graphic - pure CSS
+   off the same classes, so persistence ends automatically when script un-toggles
+   them. The label containers hold only the labels, so they stay horizontally
+   aligned across slots. */
+.invader-card-area {
+    cursor: pointer;
+}
+
+/* Closed: hidden unless the toolbar holds a toggled-on button; then only that
+   button shows, bottom-anchored over the card. Inline-hidden disabled buttons
+   (event/blight off) stay hidden regardless. */
+.invader-card-area:not(.actions-open) .invader-card-buttons {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    width: auto;            /* beat the base width: 100% (over-constrained with L/R set) */
+    z-index: 200;           /* above the card hover lift (100) */
+    display: none;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+.invader-card-area:not(.actions-open) .invader-card-buttons:has(.btn-card-action.active),
+.invader-card-area:not(.actions-open) .invader-card-buttons:has(.btn-card-action.active-yellow) {
+    display: flex;
+}
+.invader-card-area:not(.actions-open) .invader-card-buttons .btn {
+    display: none;
+    padding: 2px 5px;
+    font-size: 0.7em;       /* compact: fits several toggled buttons on the card */
+}
+.invader-card-area:not(.actions-open) .invader-card-buttons .btn-card-action.active,
+.invader-card-area:not(.actions-open) .invader-card-buttons .btn-card-action.active-yellow {
+    display: inline-block;
+}
+/* Drop groups without a toggled-on button so their ms-2 margins leave no gaps. */
+.invader-card-area:not(.actions-open) .invader-card-buttons .btn-group:not(:has(.btn-card-action.active)):not(:has(.btn-card-action.active-yellow)) {
+    display: none;
+}
+
+/* Open: overlay the card container with a scrim and stack the slot's buttons
+   vertically at uniform width. All selectors are scoped to .btn so the gear menu's
+   .dropdown-item buttons (no .btn class) are never force-shown. */
+.invader-area .invader-card-area.actions-open .invader-card-buttons {
+    position: absolute;
+    inset: 0;
+    width: auto;            /* beat the base width: 100% (over-constrained with inset) */
+    z-index: 200;
+    flex-direction: column;
+    flex-wrap: nowrap;      /* beat the mobile overlay-open wrap */
+    justify-content: center;
+    align-items: stretch;
+    gap: 4px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+}
+/* Vertical fused groups, mirroring the mobile overlay rules at
+   .invader-area.overlay-open .invader-card-buttons .btn-group (duplicated here
+   outside the media query because desktop needs them too). */
+.invader-area .invader-card-area.actions-open .invader-card-buttons .btn-group {
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0 !important;  /* beat Bootstrap's ms-2 utility */
+}
+.invader-area .invader-card-area.actions-open .invader-card-buttons .btn-group > .btn {
+    border-radius: 0;
+    margin-left: 0;
+}
+.invader-area .invader-card-area.actions-open .invader-card-buttons .btn-group > .btn:first-child {
+    border-radius: 0.25rem 0.25rem 0 0;
+}
+.invader-area .invader-card-area.actions-open .invader-card-buttons .btn-group > .btn:last-child {
+    border-radius: 0 0 0.25rem 0.25rem;
+}
+.invader-area .invader-card-area.actions-open .invader-card-buttons .btn-group > .btn + .btn {
+    margin-top: -1px;
+}
+/* Standalone buttons (lock) match the group width. */
+.invader-area .invader-card-area.actions-open .invader-card-buttons > .btn {
+    width: 100%;
+}
+
+/* Mobile overlay expansion: simple slides (the invader bar rises from the bottom
+   dock; the fear panel drops from the top bar it expands from). */
+@keyframes invader-bar-slide-up {
+    from { transform: translateY(100%); }
+}
+@keyframes fear-panel-slide-down {
+    from { transform: translateY(-100%); }
 }
 

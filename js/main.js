@@ -135,6 +135,14 @@ var eventSeqIndex = 0;
 
 var saveIndex = 0;
 
+// Mobile layout: media query handle + cached refs (populated on DOM ready)
+var mobileMq = window.matchMedia('(max-aspect-ratio: 1/1)');
+var mobilePhaseHeader = null;
+var terrorLevelHome = null;   // {parent, next} desktop homes for mobile relocation
+var discardPilesHome = null;
+var adversaryPreviewHome = null;
+var adversaryIntroHome = null;
+
 var cardDisplayType = ''; // 'fear', 'event', 'blight', 'adversary', ''
 var cardDisplayContent = ''; // id of card being displayed
 
@@ -160,6 +168,22 @@ $(function() {
 
     terrorLevelDisplay = $('#terror-level-container')
 
+    mobilePhaseHeader = $('#mobile-phase-header');
+
+    // Mobile relocation: on small screens the terror level display lives inside the fear
+    // panel (shown in the fear overlay), the discard piles card sits below the card-view
+    // buttons, and the setup modal's adversary preview + description sit in the form below
+    // the level selector; on desktop everything stays in its original column. Record
+    // desktop homes and keep placement in sync with the breakpoint.
+    terrorLevelHome = { parent: $('#terror-level-container').parent(), next: $('#terror-level-container').next() };
+    discardPilesHome = { parent: $('#discard-piles-card').parent(), next: $('#discard-piles-card').next() };
+    adversaryPreviewHome = { parent: $('.adversary-preview-container').parent(), next: $('.adversary-preview-container').next() };
+    adversaryIntroHome = { parent: $('#adversary-intro-container').parent(), next: $('#adversary-intro-container').next() };
+    mobileMq.addEventListener('change', function(e) { closeInvaderActionPopovers(); applyMobileRelocation(e.matches); });
+    applyMobileRelocation(mobileMq.matches);
+    // Rotation/resize within the mobile range changes the strip's available width
+    window.addEventListener('resize', fitInvaderStrip);
+
     setupModal = $('#setup-modal');
 
     // Handle adversary selection and preview in setup modal
@@ -178,7 +202,7 @@ $(function() {
             // Update preview with image, wrapped so the level overlay sits on it
             const selectedLevel = $('input[name="adversaryLevel"]:checked').val() || 1;
             $('#adversaryPreview').empty().append(
-                buildAdversaryCardWrapper(selectedAdversary, selectedLevel, false)
+                buildAdversaryCardWrapper(selectedAdversary, selectedLevel, true)
             );
         } else {
             // Hide adversary level selector
@@ -216,6 +240,24 @@ $(function() {
             }
         }
     }).observe(document.body, { childList: true });
+
+    // Record which wrapper's overlay is the zoom source before the plugin moves the image
+    // into the zoom wrap (capture phase runs before the plugin's click handler). This lets
+    // the overlay carry-over work from any location: main card display or setup preview.
+    document.addEventListener('click', function(e) {
+        let img = e.target.closest('img[data-action="zoom"][data-adversary]');
+        if (!img) return;
+        zoomSourceOverlay = img.parentElement.querySelector('.adversary-level-overlay');
+    }, true);
+
+    // While a card is zoomed, only an explicit click/tap may close it. The zoom plugin
+    // also closes on any touchmove (e.g. a pinch-zoom gesture); block its touch handlers
+    // (document-level, bubble phase) while zoom is open. Clicks are left alone.
+    ['touchstart', 'touchmove', 'touchend'].forEach(function(type) {
+        document.addEventListener(type, function(e) {
+            if (document.body.classList.contains('zoom-overlay-open')) e.stopPropagation();
+        }, true);
+    });
 
     $('#customSequencesEnabled').on('change', function() {
         if ($(this).is(':checked')) {
@@ -264,6 +306,7 @@ $(function() {
 
     $('#fear-deck-toggle, #fear-deck-toggle-area').on('click', function(e) {
         e.stopPropagation();
+        if (mobileMq.matches) { toggleFearOverlay(); return; } // mobile: expand as overlay instead
         let $icon = $('#fear-deck-toggle-icon');
         let isOpen = $('.fear-card-control').is(':visible');
         if (!isOpen) {
@@ -296,6 +339,31 @@ $(function() {
         $(this).toggleClass('active');
         invaderCardActions[$(this).data('card')][$(this).data('action')] = $(this).hasClass('active');
         save();
+    });
+
+    // Invader slot action popover: a slot's action buttons stay hidden until the slot
+    // is clicked; the overlay dismisses on any click outside it. Pure UI state - never saved.
+    $(document).on('click', function(e) {
+        let $toolbar = $(e.target).closest('.invader-card-buttons');
+        if ($toolbar.length) {
+            if ($toolbar.closest('.invader-card-area').hasClass('actions-open')) {
+                // Clicks on the buttons keep the overlay open; clicking the scrim
+                // (the toolbar's own background) dismisses it.
+                if (e.target === $toolbar[0]) closeInvaderActionPopovers();
+            } else {
+                // A persistent toggled-on button of another slot: an outside click.
+                closeInvaderActionPopovers();
+            }
+            return;
+        }
+        let $area = $(e.target).closest('.invader-card-area');
+        if ($area.length) {
+            let wasOpen = $area.hasClass('actions-open');
+            closeInvaderActionPopovers();
+            if (!wasOpen) openInvaderActions($area);
+            return;
+        }
+        closeInvaderActionPopovers();
     });
 
     // Logic about game setup. 
@@ -546,7 +614,7 @@ function unearnFearCard() {
 
 function updateFearBadge() {
 
-    if (phaseListFearBadge = $('#phase-list-fear-badge')) {
+    if (phaseListFearBadge = $('.phase-list-fear-badge')) {
         if (earnedFearCards == 0) {
             phaseListFearBadge.hide();
         }
@@ -557,6 +625,8 @@ function updateFearBadge() {
     }
 
     if (leftBarFearBadge && leftBarFearBadge.length) leftBarFearBadge.html(earnedFearCards);
+
+    $('#mobile-fear-earned').text('Earned: ' + earnedFearCards);
 
     for (let i = 0; i < 3; i++) {
         leftBarFearCardBadges[i].innerHTML = fearLevelSeq[i];
@@ -669,14 +739,15 @@ function onZoomOpen() {
     if (level >= 6) return; // no shading at max level
     var boundaries = getAdversaryBoundaries(img.getAttribute('data-adversary'));
     // Hide the in-card overlay so no floating band shows while the backdrop fades in.
-    zoomSourceOverlay = document.querySelector('#main-card-display .adversary-level-overlay');
+    // (Recorded by the capture-phase click listener; fall back to the main card display.)
+    if (!zoomSourceOverlay) zoomSourceOverlay = document.querySelector('#main-card-display .adversary-level-overlay');
     if (zoomSourceOverlay) zoomSourceOverlay.style.display = 'none';
     var overlay = document.createElement('div');
     overlay.className = 'adversary-level-overlay';
     overlay.style.background = adversaryOverlayGradient(level, boundaries);
     overlay.style.transformOrigin = '50% 50%';
     overlay.style.transition = 'transform 300ms';
-    overlay.style.zIndex = '667'; // paint above the zoomed image (.zoom-img is z-index 666)
+    overlay.style.zIndex = '2002'; // paint above the zoomed image (.zoom-img is z-index 2001, raised above modals)
     wrap.appendChild(overlay);
     // Match the image's scale transform now (zoom-in) and on later changes (zoom-out).
     var apply = function () { overlay.style.transform = img.style.transform || ''; };
@@ -812,6 +883,7 @@ function advancePhaseList(count, onComplete) {
 // Instant (non-animated) single step — used by finishPhaseListAnimation to drain queue
 function advancePhaseListStep() {
     phase = (phase + 1) % phaseCount;
+    updateMobilePhaseHeader();
 
     let children = $('.list-group-item', phaseList);
 
@@ -852,6 +924,7 @@ function advancePhaseListAnimated() {
 
     // 2. Advance phase state
     phase = (phase + 1) % phaseCount;
+    updateMobilePhaseHeader();
 
     // 3. Mark the exiting item
     exitingItem.addClass('phase-list-item-exiting');
@@ -970,6 +1043,121 @@ function updatePhaseList() {
         //console.log('Emptied phase list appended list item for phase ' + index);
     }
 
+    updateMobilePhaseHeader();
+}
+
+// Mirror of the current phase list item for the mobile header. IDs are stripped so the
+// copy never duplicates IDs with the desktop phase list (updates reach it via classes).
+function updateMobilePhaseHeader() {
+    if (!mobilePhaseHeader || !mobilePhaseHeader.length) return;
+    let item = generatePhaseListItem(phase);
+    item.find('[id]').removeAttr('id');
+    mobilePhaseHeader.empty().append(item);
+    if (phase === 5) updateInvaderBadge(exploreRevealed);
+}
+
+// Move the terror level display into the mobile top fear display (in place of the
+// desktop-only "Earned" column) and the discard piles card below the card-view
+// buttons, matching the current breakpoint.
+function applyMobileRelocation(isMobile) {
+    if (!terrorLevelHome) return;
+    if (isMobile) {
+        $('#fear-deck-toggle-area').before($('#terror-level-container'));
+        $('.card-view-bar').after($('#discard-piles-card'));
+        // Setup modal: preview + description right below the level selector
+        $('#adversaryLevelGroup').after($('.adversary-preview-container'), $('#adversary-intro-container'));
+        return;
+    }
+    closeFearOverlay();
+    closeInvaderOverlay();
+    restoreHome($('#terror-level-container'), terrorLevelHome);
+    restoreHome($('#discard-piles-card'), discardPilesHome);
+    restoreHome($('.adversary-preview-container'), adversaryPreviewHome);
+    restoreHome($('#adversary-intro-container'), adversaryIntroHome);
+}
+
+function restoreHome($el, home) {
+    if (home.next && home.next.length && $.contains(home.parent[0], home.next[0])) {
+        $el.insertBefore(home.next);
+    } else {
+        home.parent.append($el);
+    }
+}
+
+// Mobile fullscreen overlays: the same nodes as the collapsed fear bar / invader area,
+// restyled by CSS. Open state is pure UI - it never enters save().
+function toggleFearOverlay() {
+    if (!mobileMq.matches) return;
+    if ($('.fear-panel-top').hasClass('overlay-open')) closeFearOverlay(); else openFearOverlay();
+}
+
+function openFearOverlay() {
+    renderFearDeckInline();
+    $('.fear-panel-top').addClass('overlay-open');
+    $('.fear-overlay-caret-icon').removeClass('bi-caret-down-fill').addClass('bi-caret-up-fill');
+    document.body.classList.add('mobile-overlay-open');
+}
+
+function closeFearOverlay() {
+    $('.fear-panel-top').removeClass('overlay-open');
+    $('.fear-overlay-caret-icon').removeClass('bi-caret-up-fill').addClass('bi-caret-down-fill');
+    document.body.classList.remove('mobile-overlay-open');
+}
+
+function toggleInvaderOverlay() {
+    if (!mobileMq.matches) return;
+    if ($('.invader-area').hasClass('overlay-open')) closeInvaderOverlay(); else openInvaderOverlay();
+}
+
+function openInvaderOverlay() {
+    // Docked horizontal bar above the invader strip; height and card size come from
+    // the .invader-area.overlay-open CSS rule.
+    $('.invader-area').addClass('overlay-open');
+    $('.invader-overlay-caret-icon').removeClass('bi-caret-up-fill').addClass('bi-caret-down-fill');
+}
+
+function closeInvaderOverlay() {
+    $('.invader-area').removeClass('overlay-open');
+    $('.invader-overlay-caret-icon').removeClass('bi-caret-down-fill').addClass('bi-caret-up-fill');
+}
+
+// Invader slot action popover (both layouts; the class is restyled by CSS).
+function openInvaderActions($area) {
+    closeInvaderActionPopovers();
+    $area.addClass('actions-open');
+}
+
+function closeInvaderActionPopovers() {
+    $('.invader-card-area.actions-open').removeClass('actions-open');
+}
+
+// Keep the mobile invader strip labels identical to the PC invader area labels (some
+// adversaries rename slots). The fourth slot only appears while it is an extra build
+// row (e.g. England 3+ high immigration); once it reverts to Discard it leaves the strip.
+function syncStripLabels() {
+    $('#mobile-invader-strip .strip-slot-ravage .strip-label').text($('#invader-card-label-ravage').text());
+    $('#mobile-invader-strip .strip-slot-build .strip-label').text($('#invader-card-label-build').text());
+    $('#mobile-invader-strip .strip-slot-explore .strip-label').text($('#invader-card-label-explore').text());
+    let fourth = $('#invader-card-label-fourth').text().trim();
+    $('#strip-label-fourth').text(fourth);
+    $('#mobile-invader-strip').toggleClass('has-fourth', fourth !== 'Discard' && fourth !== '');
+    fitInvaderStrip();
+}
+
+// The strip shows the whole invader summary in one screen-wide row: when the content
+// is wider than the screen (England's 4th slot, stacked cards), scale its font-size
+// down (all strip sizes are em-based) instead of scrolling. Floored at 60% - past
+// that the strip scrolls with the caret pinned rather than shrinking to illegibility.
+function fitInvaderStrip() {
+    const strip = document.getElementById('mobile-invader-strip');
+    if (!strip) return;
+    strip.style.fontSize = '';
+    if (!mobileMq.matches) return;
+    const avail = strip.clientWidth, need = strip.scrollWidth;
+    if (!need || need <= avail) return;
+    // 0.98: scaled text widths quantize to whole pixels and can re-exceed by 1-3px
+    const scale = Math.max(avail / need * 0.98, 0.6);
+    strip.style.fontSize = (parseFloat(getComputedStyle(strip).fontSize) * scale).toFixed(1) + 'px';
 }
 
 function generatePhaseListItem(phaseIndex) {
@@ -1014,8 +1202,7 @@ function generatePhaseListItem(phaseIndex) {
         // Fear card phase special texts (fear badge)
 
         $('<span></span>')
-            .addClass('badge text-bg-dark fear-badge')
-            .attr('id', 'phase-list-fear-badge')
+            .addClass('badge text-bg-dark fear-badge phase-list-fear-badge')
             .css('float', 'right')
             .html(earnedFearCards)
             .toggle(earnedFearCards > 0)
@@ -1026,10 +1213,10 @@ function generatePhaseListItem(phaseIndex) {
 
         listItem.removeClass('d-flex');
         let invaderPhaseDescription = $('<ul style="list-style-type:none; padding-left: 40px;margin-top: 0.5em;margin-bottom: 0em;"></ul>');
-        invaderPhaseDescription.append('<li id="phase-list-fourth-item" style="display:none;">Build: <span class="badge" id="phase-list-fourth-badge"> </span> </li>')
-        invaderPhaseDescription.append('<li>Ravage: <span class="badge" id="phase-list-ravage-badge"> </span> </li>')
-        invaderPhaseDescription.append('<li>Build: <span class="badge" id="phase-list-build-badge"> </span> </li>')
-        invaderPhaseDescription.append('<li>Explore: <span class="badge" id="phase-list-explore-badge"> </span> </li>')
+        invaderPhaseDescription.append('<li class="phase-list-fourth-item" style="display:none;">Build: <span class="badge invader-badge-fourth"> </span> </li>')
+        invaderPhaseDescription.append('<li>Ravage: <span class="badge invader-badge-ravage"> </span> </li>')
+        invaderPhaseDescription.append('<li>Build: <span class="badge invader-badge-build"> </span> </li>')
+        invaderPhaseDescription.append('<li>Explore: <span class="badge invader-badge-explore"> </span> </li>')
 
         invaderPhaseDescription.appendTo(listItem);
     }
@@ -1334,6 +1521,10 @@ function load(index) {
             $('[data-action="event"]').hide();
         }
 
+        if (!blightEnabled) {
+            $('[data-action="blight"]').hide();
+        }
+
         setupModal.modal('hide');
         setupModal.css('display','none');
 
@@ -1395,7 +1586,7 @@ function updateUI() {
                 invaderSeqIndexGreaterThanLevel1 ++;
             }
             if (invaderSeqIndex < invaderSeqIndexGreaterThanLevel1 + 3) {
-                if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','block');
+                if ($('.phase-list-fourth-item')) $('.phase-list-fourth-item').css('display','block');
                 $('#invader-card-label-fourth').html('Build 🏴󠁧󠁢󠁥󠁮󠁧󠁿')
             } else {
                 // Transition: move any card in the 4th slot to discard pile
@@ -1406,14 +1597,14 @@ function updateUI() {
                         }
                     }
                 }
-                if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','none');
+                if ($('.phase-list-fourth-item')) $('.phase-list-fourth-item').css('display','none');
                 $('#invader-card-label-fourth').html('Discard')
             }
         }
         else if (adversaryLevel >= 4) {
-            if ($('#phase-list-fourth-item')) $('#phase-list-fourth-item').css('display','block'); 
+            if ($('.phase-list-fourth-item')) $('.phase-list-fourth-item').css('display','block');
             $('#invader-card-label-fourth').html('Build 🏴󠁧󠁢󠁥󠁮󠁧󠁿')
-        }   
+        }
     }
 
     $('.btn-card-action').each(function() {
@@ -1452,6 +1643,7 @@ function updateUI() {
         $('#btn-undo').removeAttr('disabled');
     }
 
+    syncStripLabels();
 
 }
 
@@ -1485,6 +1677,8 @@ function initUI() {
         $('#adversary-name-display').html('None');
         $('#show-adversary-card-btn').hide();
     }
+
+    syncStripLabels();
 }
 
 function startNewGame() {
@@ -1578,7 +1772,8 @@ function updateInvaderCard(showExploreCard) {
     let slots = [invaderCardFourth, invaderCardRavage, invaderCardBuild, invaderCardExplore];
 
     for (let i = 0; i < 4; i++) {
-        slots[i].empty();
+        // Remove only the card images; the slot's action toolbar also lives in the container.
+        slots[i].children('.game-card-invader').remove();
         if (!invaderCards[i]) continue; // Skip slot if no cards in invaderCards[i]
         for (let j = 0; j < invaderCards[i].length; j++) {
             let card = (i === 3 && (!showExploreCard || invaderCardActions['explore']['lock'])) ? codeToLevel(invaderCards[i][j]) : invaderCards[i][j];
@@ -1716,53 +1911,53 @@ function generateBadge(terrain) {
 
 function updateInvaderBadge(showExplore) {
 
-    fourthBadge = $('#phase-list-fourth-badge');
-    ravageBadge = $('#phase-list-ravage-badge');
-    buildBadge = $('#phase-list-build-badge');
-    exploreBadge = $('#phase-list-explore-badge');
-
-    if (!fourthBadge && !ravageBadge && !buildBadge && !exploreBadge) return;
-
-    fourthBadge.empty();
-    ravageBadge.empty();
-    buildBadge.empty();
-    exploreBadge.empty();
-
-    badges = [fourthBadge, ravageBadge, buildBadge, exploreBadge];
+    // Render into every slot carrying that slot's class: the phase list item, the mobile
+    // phase header, and the mobile invader strip. Badges are regenerated per container.
+    const slotNames = ['fourth', 'ravage', 'build', 'explore'];
 
     for (let i = 0; i < 4; i++) {
+
+        let badges = $('.invader-badge-' + slotNames[i]);
+        if (!badges.length) continue;
+        badges.empty();
 
         // Update badges from explore to ravage
         // Skip first row of adversary badges if not England 3 or above (high immigration)
         if (!(adversary === 'england' && adversaryLevel >= 3) && i === 0) continue;
 
-        if (invaderCards[i].length === 0) {
-            badges[i].append(generateBadge('n'))
-            continue;
-        }
+        badges.each(function() {
+            let badge = $(this);
 
-        for (let j = 0; j < invaderCards[i].length; j++) {
-            let code = invaderCards[i][j]; // e.g. 3mj, ss
-            if (isNaN(code[0])) {
-                badges[i].append(generateBadge(code));
-                continue;
+            if (invaderCards[i].length === 0) {
+                badge.append(generateBadge('n'));
+                return;
             }
-            if (i === 3 && (!showExplore || invaderCardActions['explore']['lock'])) {
-                badges[i].append(generateBadge('u'));
-                continue;
-            } 
 
-            // Else if code[0] is a number (stage)...
-            level = code[0];
-            for (let k = 0; k < code.length-1; k++) {
-                badges[i].append(generateBadge(code[k+1]));
+            for (let j = 0; j < invaderCards[i].length; j++) {
+                let code = invaderCards[i][j]; // e.g. 3mj, ss
+                if (isNaN(code[0])) {
+                    badge.append(generateBadge(code));
+                    continue;
+                }
+                if (i === 3 && (!showExplore || invaderCardActions['explore']['lock'])) {
+                    badge.append(generateBadge('u'));
+                    continue;
+                }
+
+                // Else if code[0] is a number (stage)...
+                level = code[0];
+                for (let k = 0; k < code.length-1; k++) {
+                    badge.append(generateBadge(code[k+1]));
+                }
+                if (i === 3 && level === '2' && code[1] !== 'c') badge.append(' + Escalation')
+                if (j < invaderCards[i].length - 1) badge.append(', ');
             }
-            if (i === 3 && level === '2' && code[1] !== 'c') badges[i].append(' + Escalation')
-            if (j < invaderCards[i].length - 1) badges[i].append(', ');
-        }
-        
+        });
+
     }
-    
+
+    fitInvaderStrip();
+
 }
 
 function redrawBlightCard() {
@@ -2220,6 +2415,8 @@ function drawFearCardFromQueue() {
 
 function renderFearEarnedInline() {
     let $container = $('#fear-earned-inline');
+    // Keep the row's horizontal scroll across the re-render (e.g. after a card click)
+    let scrollLeft = $container.find('.fear-deck-card-row').scrollLeft();
     $container.empty();
     $container.toggleClass('show-gradient', fearEarnedQueue.length >= 3);
     if (fearEarnedQueue.length === 0) {
@@ -2238,10 +2435,13 @@ function renderFearEarnedInline() {
         $cards.append($card);
     }
     $container.append($cards);
+    $cards.scrollLeft(scrollLeft);
 }
 
 function renderFearDeckInline() {
     let $container = $('#fear-deck-inline');
+    // Keep each level row's horizontal scroll across the re-render (e.g. after a card click)
+    let scrolls = $container.find('.fear-deck-card-row').map(function() { return $(this).scrollLeft(); }).get();
     $container.empty();
 
     // Terror level sections
@@ -2288,12 +2488,18 @@ function renderFearDeckInline() {
         if (hasNextLevel) $container.append('<hr class="my-1">');
     }
 
+    $container.find('.fear-deck-card-row').each(function(i) {
+        if (i < scrolls.length) $(this).scrollLeft(scrolls[i]);
+    });
 
 }
 
 function renderCardHistories() {
     let $eventContainer = $('#card-history-event');
     let $fearContainer = $('#card-history-fear');
+    // Keep each row's horizontal scroll across the re-render (e.g. after a card click)
+    let eventScroll = $eventContainer.find('.fear-deck-card-row').scrollLeft();
+    let fearScroll = $fearContainer.find('.fear-deck-card-row').scrollLeft();
     $eventContainer.empty();
     $fearContainer.empty();
     $eventContainer.toggleClass('show-gradient', eventSeqIndex >= 3);
@@ -2312,6 +2518,7 @@ function renderCardHistories() {
             $cards.append($card);
         }
         $eventContainer.append($cards);
+        $cards.scrollLeft(eventScroll);
     } else {
         $eventContainer.append('<div class="text-secondary d-flex align-items-center justify-content-center" style="font-size:1.2rem; font-style:italic; flex:1;">None</div>');
     }
@@ -2329,6 +2536,7 @@ function renderCardHistories() {
             $cards.append($card);
         }
         $fearContainer.append($cards);
+        $cards.scrollLeft(fearScroll);
     } else {
         $fearContainer.append('<div class="text-secondary d-flex align-items-center justify-content-center" style="font-size:1.2rem; font-style:italic; flex:1;">None</div>');
     }
