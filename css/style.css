@@ -2,7 +2,7 @@ html {
   /* Fluid: scales continuously with viewport width so text shrinks before components
      overflow — 80% at ~530px and below, ~107% at 900px, ~130% at 1200px, capped at the
      original 100% at ~1730px and wider. One curve for both layouts. */
-  font-size: clamp(80%, 0.4rem + 1vw, 100%);
+  font-size: clamp(0.8rem, 0.4rem + 1vw, 1rem);
 }
 
 .btn-group-toggle input[type="radio"] {
@@ -46,13 +46,13 @@ html {
 
 .background-blur
 {
-  position: fixed; /* or absolute */
+  position: absolute; /* or absolute */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-image: url(../assets/board/board.jpg);
-  background-size: cover;
+  background-size: 100%;
   filter: blur(8px);
   z-index: -1;
 
@@ -763,6 +763,7 @@ html {
     position: relative;
     border-radius: 12px;
     padding: 12px;
+    margin-top: 12px;
     width: 100%;
     aspect-ratio: 1797 / 1197;
     display: flex;
@@ -1366,21 +1367,18 @@ html {
         width: auto;
         flex: 1 1 auto;
     }
-    #fear-cards-remaining-container { font-size: clamp(1.5rem, 8vw, 2rem) !important; }
+    #fear-cards-remaining-container { font-size: clamp(1rem, 8vw, 1.5rem) !important; }
     /* Earned count right of the deck counts; em-based so it shrinks with the
        container's vw-clamped font on narrow phones instead of overflowing. */
     #mobile-fear-earned {
         display: inline;
-        font-size: 0.5em;
+        font-size: 0.75em;
         white-space: nowrap;
         margin-left: 6px;
     }
     /* ...and smaller again in the fullscreen overlay, whose top row is exactly full
        without it (otherwise it pushes the expand caret off-screen). */
-    .fear-panel-top.overlay-open #mobile-fear-earned {
-        font-size: 0.35em;
-        margin-left: 3px;
-    }
+
     .fear-badge-slash { width: 10px; margin: 0px 2px; }
 
     /* Collapsed bar only shows the top display + the button/progress row; the deck
@@ -1513,8 +1511,7 @@ html {
     /* --- Misc buttons (left-bar-bottom) --- */
     .left-bar-bottom {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4px 8px;
+        gap: 12px 8px;
         margin-top: 0;
         padding: 8px;
     }
@@ -1637,8 +1634,8 @@ html {
         border-radius: 0;
         overflow-x: auto;
         overflow-y: hidden;
-        height: 30vh;
-        height: 30svh;
+        height: 40vw;
+        height: 40svw;
         padding: 8px;
         justify-content: center;
         animation: invader-bar-slide-up 0.25s ease-out;
@@ -1727,11 +1724,7 @@ html {
     #gameSetupForm .btn-group {
         flex-wrap: wrap;
     }
-    #gameSetupForm .btn-group .btn {
-        flex: 1 0 auto;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
+
     #customSequencesSection .row > [class*="col-md"] {
         margin-bottom: 6px;
     }

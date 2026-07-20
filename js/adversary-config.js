@@ -43,14 +43,14 @@ const adversaryNameDict = {
 
 const adversaryFlagDict = {
     'none': '',
-    'prussia': '(B-P)',
+    'prussia': '🇩🇪',
     'england': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
     'sweden': '🇸🇪',
-    'france': '(FR)',
-    'habsburg-livestock': '(HA)',
+    'france': '🇫🇷',
+    'habsburg-livestock': '🇦🇹',
     'scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
-    'russia': '(RU)',
-    'habsburg-mining': '(HME)'
+    'russia': '🇷🇺',
+    'habsburg-mining': '🇦🇹'
 }
 
 const adversaryIntroText = {
