@@ -1524,8 +1524,8 @@ html {
     #mobile-phase-header {
         font-family: 'Cantora One';
         position: sticky;
-        top: 14vh;
-        top: 14svh;
+        top: 15vh;
+        top: 15svh;
         z-index: 900;
     }
     #mobile-phase-header .list-group-item {
