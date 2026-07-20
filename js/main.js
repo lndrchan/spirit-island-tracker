@@ -137,6 +137,7 @@ var saveIndex = 0;
 
 // Mobile layout: media query handle + cached refs (populated on DOM ready)
 var mobileMq = window.matchMedia('(max-aspect-ratio: 1/1)');
+var reducedMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
 var mobilePhaseHeader = null;
 var terrorLevelHome = null;   // {parent, next} desktop homes for mobile relocation
 var discardPilesHome = null;
@@ -364,6 +365,14 @@ $(function() {
             return;
         }
         closeInvaderActionPopovers();
+    });
+
+    // Mobile invader overlay: any click outside the docked bar and its strip collapses
+    // it. The strip itself is excluded - its own onclick keeps it the tap-to-close handle.
+    $(document).on('click', function(e) {
+        if (!$('.invader-area').hasClass('overlay-open')) return;
+        if ($(e.target).closest('.invader-area, #mobile-invader-strip').length) return;
+        closeInvaderOverlay();
     });
 
     // Logic about game setup. 
@@ -1085,13 +1094,21 @@ function restoreHome($el, home) {
 }
 
 // Mobile fullscreen overlays: the same nodes as the collapsed fear bar / invader area,
-// restyled by CSS. Open state is pure UI - it never enters save().
+// restyled by CSS. Open state is pure UI - it never enters save(). Close plays a 250ms
+// collapse: .overlay-closing keeps the .overlay-open styles applied until the teardown
+// timeout (matching the CSS duration) removes both classes.
+var fearOverlayCloseTimeout = null;
+var invaderOverlayCloseTimeout = null;
+
 function toggleFearOverlay() {
     if (!mobileMq.matches) return;
-    if ($('.fear-panel-top').hasClass('overlay-open')) closeFearOverlay(); else openFearOverlay();
+    if ($('.fear-panel-top').hasClass('overlay-open') && !$('.fear-panel-top').hasClass('overlay-closing')) closeFearOverlay(); else openFearOverlay();
 }
 
 function openFearOverlay() {
+    closeInvaderOverlay(); // the two overlays are mutually exclusive
+    if (fearOverlayCloseTimeout) { clearTimeout(fearOverlayCloseTimeout); fearOverlayCloseTimeout = null; }
+    $('.fear-panel-top').removeClass('overlay-closing'); // cancels a pending close; the expand animation restarts on its own
     renderFearDeckInline();
     $('.fear-panel-top').addClass('overlay-open');
     $('.fear-overlay-caret-icon').removeClass('bi-caret-down-fill').addClass('bi-caret-up-fill');
@@ -1099,26 +1116,56 @@ function openFearOverlay() {
 }
 
 function closeFearOverlay() {
-    $('.fear-panel-top').removeClass('overlay-open');
+    let $panel = $('.fear-panel-top');
+    if (!$panel.hasClass('overlay-open') || $panel.hasClass('overlay-closing')) return;
     $('.fear-overlay-caret-icon').removeClass('bi-caret-up-fill').addClass('bi-caret-down-fill');
+    if (!mobileMq.matches || reducedMotionMq.matches) { teardownFearOverlay(); return; }
+    $panel.addClass('overlay-closing');
+    fearOverlayCloseTimeout = setTimeout(function() {
+        fearOverlayCloseTimeout = null;
+        teardownFearOverlay();
+    }, 250);
+}
+
+function teardownFearOverlay() {
+    if (fearOverlayCloseTimeout) { clearTimeout(fearOverlayCloseTimeout); fearOverlayCloseTimeout = null; }
+    $('.fear-panel-top').removeClass('overlay-open overlay-closing');
     document.body.classList.remove('mobile-overlay-open');
 }
 
 function toggleInvaderOverlay() {
     if (!mobileMq.matches) return;
-    if ($('.invader-area').hasClass('overlay-open')) closeInvaderOverlay(); else openInvaderOverlay();
+    if ($('.invader-area').hasClass('overlay-open') && !$('.invader-area').hasClass('overlay-closing')) closeInvaderOverlay(); else openInvaderOverlay();
 }
 
 function openInvaderOverlay() {
     // Docked horizontal bar above the invader strip; height and card size come from
-    // the .invader-area.overlay-open CSS rule.
+    // the .invader-area.overlay-open CSS rule. The strip itself stretches up behind
+    // the bar (morph), keeping its caret row as the tap-to-close handle.
+    if (invaderOverlayCloseTimeout) { clearTimeout(invaderOverlayCloseTimeout); invaderOverlayCloseTimeout = null; }
+    $('.invader-area').removeClass('overlay-closing');
     $('.invader-area').addClass('overlay-open');
+    $('#mobile-invader-strip').addClass('strip-expanded');
     $('.invader-overlay-caret-icon').removeClass('bi-caret-up-fill').addClass('bi-caret-down-fill');
 }
 
 function closeInvaderOverlay() {
-    $('.invader-area').removeClass('overlay-open');
+    let $area = $('.invader-area');
+    if (!$area.hasClass('overlay-open') || $area.hasClass('overlay-closing')) return;
     $('.invader-overlay-caret-icon').removeClass('bi-caret-down-fill').addClass('bi-caret-up-fill');
+    $('#mobile-invader-strip').removeClass('strip-expanded');
+    if (!mobileMq.matches || reducedMotionMq.matches) { teardownInvaderOverlay(); return; }
+    $area.addClass('overlay-closing');
+    invaderOverlayCloseTimeout = setTimeout(function() {
+        invaderOverlayCloseTimeout = null;
+        teardownInvaderOverlay();
+    }, 250);
+}
+
+function teardownInvaderOverlay() {
+    if (invaderOverlayCloseTimeout) { clearTimeout(invaderOverlayCloseTimeout); invaderOverlayCloseTimeout = null; }
+    $('.invader-area').removeClass('overlay-open overlay-closing');
+    $('#mobile-invader-strip').removeClass('strip-expanded');
 }
 
 // Invader slot action popover (both layouts; the class is restyled by CSS).

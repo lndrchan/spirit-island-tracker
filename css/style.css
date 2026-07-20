@@ -408,7 +408,7 @@ html {
 #card-history-event .fear-deck-card-wrapper,
 #card-history-fear .fear-deck-card-wrapper {
     position: relative;
-    width: clamp(50px, 5vw, 80px);
+    width: clamp(80px, 5vw, 120px);
     flex-shrink: 0;
     margin-right: -10px;
     cursor: pointer;
@@ -669,8 +669,9 @@ html {
 .phase-list-icon-container
 {
     display: inline-block;
-    height: 1em;
-    width: 2.5em;
+    height: 1rem;
+    width: 1rem;
+    margin-right: 0.75rem;
 }
 
 .phase-list-icon
@@ -1271,9 +1272,17 @@ html {
     .phase-list-animating .phase-list-fade-out {
         transition: none;
     }
+    /* !important: this block precedes the mobile media block, so equal-specificity
+       rules (and the more specific .overlay-closing variants) would otherwise win.
+       Elements mid-close still match the .overlay-open selectors. */
     .fear-panel-top.overlay-open,
+    .fear-panel-top.overlay-open #fear-deck-inline,
     .invader-area.overlay-open {
-        animation: none;
+        animation: none !important;
+    }
+    #mobile-invader-strip,
+    #mobile-invader-strip .strip-slot {
+        transition: none !important;
     }
 }
 
@@ -1293,6 +1302,7 @@ html {
 
     body {
         overscroll-behavior-y: contain;
+        font-family: 'Cantora One', sans-serif;
     }
 
     /* The fixed full-viewport blur is expensive on mobile GPUs */
@@ -1421,7 +1431,7 @@ html {
         justify-content: center;
         cursor: pointer;
     }
-    .fear-deck-toggle-badge { padding: 0 14px; }
+    .fear-deck-toggle-badge { display: none; } /* desktop-only */
 
     .fear-panel-top > hr { display: none; }
 
@@ -1438,7 +1448,18 @@ html {
         padding: 12px;
         display: flex;
         flex-direction: column;
-        animation: fear-panel-slide-down 0.25s ease-out;
+        animation: fear-overlay-expand 0.25s ease-out;
+    }
+    /* Only the deck preview fades: the top row (terror level + fear numbers) is the
+       same DOM as the collapsed bar, so it stays put for visual continuity. */
+    .fear-panel-top.overlay-open #fear-deck-inline {
+        animation: overlay-child-fade-in 0.25s ease-out;
+    }
+    .fear-panel-top.overlay-open.overlay-closing {
+        animation: fear-overlay-collapse 0.25s ease-in forwards;
+    }
+    .fear-panel-top.overlay-open.overlay-closing #fear-deck-inline {
+        animation: overlay-child-fade-out 0.25s ease-in forwards;
     }
     .fear-panel-top.overlay-open .fear-card-control { display: block; }
     .fear-panel-top.overlay-open .fear-panel-bottom { display: none; }
@@ -1502,6 +1523,10 @@ html {
     /* --- Phase header (current phase item only) --- */
     #mobile-phase-header {
         font-family: 'Cantora One';
+        position: sticky;
+        top: 14vh;
+        top: 14svh;
+        z-index: 900;
     }
     #mobile-phase-header .list-group-item {
         padding: 10px 12px;
@@ -1539,6 +1564,25 @@ html {
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
         border-top: 1px solid rgba(255, 255, 255, 0.18);
+        /* Strip → overlay morph (collapse direction): this base rule's transition
+           runs when .strip-expanded is removed. */
+        transition: height 0.25s ease-in;
+    }
+    /* Strip → overlay morph (expand direction): on open the strip itself stretches
+       upward to the bar's full extent (bottom-anchored, so its top edge rises), its
+       slots fade out, and the strip's growing box masks the invader bar (the bar's
+       clip-path animation tracks this height - see @keyframes invader-bar-expand).
+       The strip's bottom row (caret) stays as the tap-to-close handle; flex-end
+       bottom-anchors the contents so they don't drift as the box grows. */
+    #mobile-invader-strip.strip-expanded {
+        height: 40vw;
+        height: 40svw;
+        align-items: flex-end;
+        transition: height 0.25s ease-out;
+    }
+    #mobile-invader-strip.strip-expanded .strip-slot {
+        opacity: 0;
+        transition: opacity 0.15s ease;
     }
     #mobile-invader-strip::-webkit-scrollbar { display: none; }
     .strip-slot {
@@ -1546,6 +1590,9 @@ html {
         gap: 1px;
         white-space: nowrap;
         flex: none;
+        /* Label fade-in is delayed so the badges return after the bar above has
+           started receding (collapse direction of the strip → overlay morph). */
+        transition: opacity 0.15s ease 0.1s;
     }
     .strip-label {
         font-size: 0.9em;   /* em, not rem: fitInvaderStrip() scales the strip's
@@ -1628,7 +1675,7 @@ html {
         position: fixed;
         left: 0;
         right: 0;
-        bottom: calc(var(--dock-h) + var(--strip-h) + env(safe-area-inset-bottom));
+        bottom: calc(var(--dock-h) + env(safe-area-inset-bottom));
         z-index: 1050;
         margin-top: 0;
         border-radius: 0;
@@ -1638,7 +1685,10 @@ html {
         height: 40svw;
         padding: 8px;
         justify-content: center;
-        animation: invader-bar-slide-up 0.25s ease-out;
+        animation: invader-bar-expand 0.25s ease-out;
+    }
+    .invader-area.overlay-open.overlay-closing {
+        animation: invader-bar-collapse 0.25s ease-in forwards;
     }
     .invader-area.overlay-open .invader-card-area {
         flex: 0 0 calc((100% - 60px) / 4);
@@ -1832,12 +1882,35 @@ html {
     width: 100%;
 }
 
-/* Mobile overlay expansion: simple slides (the invader bar rises from the bottom
-   dock; the fear panel drops from the top bar it expands from). */
-@keyframes invader-bar-slide-up {
-    from { transform: translateY(100%); }
+/* Mobile overlay expansion. The fear panel clips open from its anchored top edge
+   while the deck preview fades in (the shared top row stays put). The invader bar
+   does not move itself: the invader strip stretches upward underneath it (see
+   #mobile-invader-strip.strip-expanded) and the strip's growing silhouette masks
+   the bar - the bar's clip-path tracks the strip's height (same 0.25s duration and
+   easing on both), so the bar is revealed exactly where the strip has grown.
+   Separate collapse keyframes (not direction: reverse) so the close animation is
+   a fresh animation that actually plays; forwards holds the end state until JS
+   removes the classes. */
+@keyframes fear-overlay-expand {
+    from { clip-path: inset(0 0 100% 0); }
+    to   { clip-path: inset(0); }
 }
-@keyframes fear-panel-slide-down {
-    from { transform: translateY(-100%); }
+@keyframes fear-overlay-collapse {
+    from { clip-path: inset(0); }
+    to   { clip-path: inset(0 0 100% 0); }
+}
+@keyframes invader-bar-expand {
+    from { clip-path: inset(calc(40vw - var(--strip-h)) 0 0 0); clip-path: inset(calc(40svw - var(--strip-h)) 0 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes invader-bar-collapse {
+    from { clip-path: inset(0 0 0 0); }
+    to   { clip-path: inset(calc(40vw - var(--strip-h)) 0 0 0); clip-path: inset(calc(40svw - var(--strip-h)) 0 0 0); }
+}
+@keyframes overlay-child-fade-in {
+    from { opacity: 0; }
+}
+@keyframes overlay-child-fade-out {
+    to   { opacity: 0; }
 }
 
