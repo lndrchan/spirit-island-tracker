@@ -1784,8 +1784,8 @@ html {
 }
 .invader-card-area:not(.actions-open) .invader-card-buttons .btn {
     display: none;
-    padding: 2px 5px;
-    font-size: 0.7em;       /* compact: fits several toggled buttons on the card */
+    padding: 4px 8px;
+    font-size: 0.9em;       /* still below the open-toolbar size: fits several toggled buttons on the card */
 }
 .invader-card-area:not(.actions-open) .invader-card-buttons .btn-card-action.active,
 .invader-card-area:not(.actions-open) .invader-card-buttons .btn-card-action.active-yellow {
